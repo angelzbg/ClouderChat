@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "433200831608",
+    "firebase_url": "https://clouder-5f40f.firebaseio.com",
+    "project_id": "clouder-5f40f",
+    "storage_bucket": "clouder-5f40f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433200831608:android:86de724a089902c4",
+        "android_client_info": {
+          "package_name": "angelzani.clouderchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "433200831608-oasaavl1mkgibmt0bactea2ng5diciu5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "angelzani.clouderchat",
+            "certificate_hash": "47d580cfc5c8b8642914868b514b050c0ad2a510"
+          }
+        },
+        {
+          "client_id": "433200831608-5abh3bp4hjt30b4as76muhoqdg0074cc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgxDJReziY_OYOkKYj4WQX33BVZOPBJlY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "433200831608-5abh3bp4hjt30b4as76muhoqdg0074cc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "433200831608-e6begv6c9083sd3sm189f55sb176a9l0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.angelzani.clouder"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

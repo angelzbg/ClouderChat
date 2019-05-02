@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_CL_Main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gui_gray_mid"
+    tools:context=".AppActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_Header"
+        android:layout_width="0dp"
+        android:layout_height="64px"
+        android:background="@color/gui_gray_mid"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/app_IV_Avatar"
+            android:layout_width="50px"
+            android:layout_height="50px"
+            android:layout_marginStart="28px"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/clouder_avatar_default" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/app_CL_SearchHeader"
+            android:layout_width="0dp"
+            android:layout_height="50px"
+            android:layout_marginStart="28px"
+            android:layout_marginEnd="28px"
+            android:background="@color/gui_gray_normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/app_IV_Avatar"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/app_IV_IconSearch"
+                android:layout_width="30px"
+                android:layout_height="30px"
+                android:layout_marginEnd="20px"
+                android:tint="@color/gui_text_hint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_find" />
+
+            <TextView
+                android:id="@+id/app_TV_Search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20px"
+                android:layout_marginEnd="10px"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="Search"
+                android:textAlignment="textStart"
+                android:textColorHint="@color/gui_text_hint"
+                android:textSize="20px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/app_IV_IconSearch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_Requests"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/app_CL_BottomMenu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_CL_Header">
+
+        <ScrollView
+            android:id="@+id/app_SV_Requests"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/app_LL_Requests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_Friends"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/app_CL_Chats"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/app_CL_Chats">
+
+        <ScrollView
+            android:id="@+id/app_SV_Friends"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/app_LL_Friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_Chats"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/app_CL_BottomMenu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_CL_Header">
+
+        <ScrollView
+            android:id="@+id/app_SV_Chats"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/app_LL_Chats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_BottomMenu"
+        android:layout_width="0dp"
+        android:layout_height="64px"
+        android:background="@color/gui_gray_dark"
+        android:elevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/app_CL_BottomMenuWrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/app_IB_Chat_Menu"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:background="@color/transparent"
+                android:scaleType="fitXY"
+                android:tint="@color/gui_gray_light"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_chat_menu" />
+
+            <ImageButton
+                android:id="@+id/app_IB_Friends_Menu"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:layout_marginStart="25px"
+                android:background="@color/transparent"
+                android:scaleType="fitXY"
+                android:tint="@color/gui_text_whitish"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/app_IB_Chat_Menu"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_friends_menu" />
+
+            <ImageButton
+                android:id="@+id/app_IB_Requests_Menu"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:layout_marginStart="25px"
+                android:background="@color/transparent"
+                android:scaleType="fitXY"
+                android:tint="@color/gui_gray_light"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/app_IB_Friends_Menu"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_requests_menu" />
+
+            <TextView
+                android:id="@+id/app_TV_Requests"
+                android:layout_width="wrap_content"
+                android:layout_height="25px"
+                android:fontFamily="@font/roboto_light"
+                android:gravity="center"
+                android:paddingStart="8px"
+                android:paddingEnd="8px"
+                android:text="0"
+                android:textColor="@color/gui_text_white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/app_IB_Requests_Menu"
+                app:layout_constraintEnd_toEndOf="@+id/app_IB_Requests_Menu" />
+
+            <TextView
+                android:id="@+id/app_TV_OnlineFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="25px"
+                android:fontFamily="@font/roboto_light"
+                android:gravity="center"
+                android:paddingStart="8px"
+                android:paddingEnd="8px"
+                android:text="0"
+                android:textColor="@color/gui_text_white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/app_IB_Friends_Menu"
+                app:layout_constraintEnd_toEndOf="@+id/app_IB_Friends_Menu" />
+
+            <TextView
+                android:id="@+id/app_TV_ChatNew"
+                android:layout_width="35px"
+                android:layout_height="25px"
+                android:fontFamily="@font/roboto_light"
+                android:gravity="center"
+                android:text="NEW"
+                android:textColor="@color/gui_text_white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/app_IB_Chat_Menu"
+                app:layout_constraintEnd_toEndOf="@+id/app_IB_Chat_Menu" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_PrivChat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gui_gray_mid"
+        android:clickable="true"
+        android:elevation="17dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/app_CL_PrivChatHeader"
+            android:layout_width="0dp"
+            android:layout_height="64px"
+            android:background="@color/gui_gray_mid"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/app_IV_PrivChat_Avatar"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:layout_marginStart="28px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/clouder_avatar_default" />
+
+            <View
+                android:id="@+id/app_V_PrivChat_Presence"
+                android:layout_width="12px"
+                android:layout_height="12px"
+                app:layout_constraintBottom_toBottomOf="@+id/app_IV_PrivChat_Avatar"
+                app:layout_constraintEnd_toEndOf="@+id/app_IV_PrivChat_Avatar" />
+
+            <TextView
+                android:id="@+id/app_TV_PrivChat_Nick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12px"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Nickname"
+                android:textColor="@color/gui_text_white"
+                android:textSize="20px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/app_IV_PrivChat_Avatar"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/app_IV_PrivChat_X"
+                android:layout_width="40px"
+                android:layout_height="40px"
+                android:layout_marginEnd="12px"
+                android:scaleType="fitXY"
+                android:tint="@color/blue_hex2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_x" />
+        </android.support.constraint.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/app_SV_PrivChatBody"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/app_CL_PrivChatBottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/app_CL_PrivChatHeader">
+
+            <LinearLayout
+                android:id="@+id/app_LL_PrivChatBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/app_CL_PrivChatBottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/gui_gray_dark"
+            android:elevation="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/app_IV_PrivChat_Gallery"
+                android:layout_width="40px"
+                android:layout_height="40px"
+                android:layout_marginStart="12px"
+                android:layout_marginTop="12px"
+                android:layout_marginBottom="12px"
+                android:tint="@color/gui_gray_normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_gallery" />
+
+            <ImageButton
+                android:id="@+id/app_IB_PrivChat_Send"
+                android:layout_width="40px"
+                android:layout_height="40px"
+                android:layout_marginTop="12px"
+                android:layout_marginEnd="12px"
+                android:layout_marginBottom="12px"
+                android:background="@color/transparent"
+                android:scaleType="fitXY"
+                android:tint="@color/gui_gray_normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_send" />
+
+            <EditText
+                android:id="@+id/app_ET_PrivChat_TextBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12px"
+                android:layout_marginTop="12px"
+                android:layout_marginEnd="12px"
+                android:layout_marginBottom="12px"
+                android:background="@color/transparent"
+                android:ems="10"
+                android:focusableInTouchMode="true"
+                android:hint="Type your message here"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="4"
+                android:paddingStart="12px"
+                android:paddingEnd="12px"
+                android:scrollbars="vertical"
+                android:textColor="@color/gui_text_whitish"
+                android:textColorHint="@color/gui_text_hint"
+                android:textSize="18px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/app_IB_PrivChat_Send"
+                app:layout_constraintStart_toEndOf="@+id/app_IV_PrivChat_Gallery"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_BigImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gui_gray_mid"
+        android:clickable="true"
+        android:elevation="18dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <angelzani.clouderchat.UI.ZoomableImageView
+            android:id="@+id/app_IV_BigImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/app_CL_BigImageMenu"
+            android:layout_width="0dp"
+            android:layout_height="64px"
+            android:background="@color/gui_gray_mid_80transp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/app_IB_BigImageClose"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="10px"
+                android:layout_marginEnd="10px"
+                android:layout_marginBottom="10px"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="fitCenter"
+                android:tint="@color/violet_hex2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_x" />
+
+            <ImageButton
+                android:id="@+id/app_IB_BigImageSave"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="10px"
+                android:layout_marginTop="10px"
+                android:layout_marginBottom="10px"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="fitCenter"
+                android:tint="@color/blue_hex2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_save" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search_CL_Main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gui_gray_mid"
+        android:clickable="true"
+        android:elevation="18dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/search_CL_Header"
+            android:layout_width="0dp"
+            android:layout_height="64px"
+            android:background="@color/gui_gray_mid"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/search_IB_Back"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:layout_marginStart="28px"
+                android:background="@color/transparent"
+                android:scaleType="fitXY"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_arrow_left" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/search_CL_Search"
+                android:layout_width="0dp"
+                android:layout_height="50px"
+                android:layout_marginStart="28px"
+                android:layout_marginEnd="28px"
+                android:background="@color/gui_gray_normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/search_IB_Back"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <EditText
+                    android:id="@+id/search_ET_Search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20px"
+                    android:layout_marginEnd="10px"
+                    android:background="@color/transparent"
+                    android:ems="10"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="Search"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/gui_text_white"
+                    android:textColorHint="@color/gui_text_hint"
+                    android:textSize="20px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/search_IB_Search"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/search_IB_Search"
+                    android:layout_width="30px"
+                    android:layout_height="30px"
+                    android:layout_marginEnd="20px"
+                    android:background="@color/transparent"
+                    android:scaleType="fitXY"
+                    android:tint="@color/gui_text_hint"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/icon_find" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/search_SV_Results"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_CL_Header">
+
+            <LinearLayout
+                android:id="@+id/search_LL_Results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/search_LL_People"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/search_CL_People"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/search_TV_People"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="PEOPLE"
+                            android:textAlignment="center"
+                            android:textColor="@color/gui_text_whitish"
+                            android:textSize="14px"
+                            android:textStyle="bold"
+                            android:visibility="invisible"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/search_LL_PeopleFriends" />
+
+                        <LinearLayout
+                            android:id="@+id/search_LL_PeopleFriends"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/search_LL_PeopleResults"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/search_TV_People">
+
+                        </LinearLayout>
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/self_CL_Main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gui_gray_mid"
+        android:clickable="true"
+        android:elevation="18dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/self_CL_Header"
+            android:layout_width="0dp"
+            android:layout_height="64px"
+            android:background="@color/gui_gray_mid"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/self_IV_Back"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:layout_marginStart="28px"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_arrow_left" />
+
+            <TextView
+                android:id="@+id/self_TV_Me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28px"
+                android:fontFamily="@font/roboto_medium"
+                android:text="My Profile"
+                android:textColor="@color/white"
+                android:textSize="25px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/self_IV_Back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/self_SV_Profile"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/self_CL_Header">
+
+            <LinearLayout
+                android:id="@+id/self_LL_SVProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/self_CL_inLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/self_IV_CircleBack"
+                        android:layout_width="320px"
+                        android:layout_height="320px"
+                        android:scaleType="fitCenter"
+                        android:tint="@color/gui_text_whitish"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/icon_circle1" />
+
+                    <ImageView
+                        android:id="@+id/self_IV_Avatar"
+                        android:layout_width="224px"
+                        android:layout_height="224px"
+                        app:layout_constraintBottom_toBottomOf="@+id/self_IV_CircleBack"
+                        app:layout_constraintEnd_toEndOf="@+id/self_IV_CircleBack"
+                        app:layout_constraintStart_toStartOf="@+id/self_IV_CircleBack"
+                        app:layout_constraintTop_toTopOf="@+id/self_IV_CircleBack"
+                        app:srcCompat="@drawable/clouder_avatar_default" />
+
+                    <ImageView
+                        android:id="@+id/self_IV_Accept"
+                        android:layout_width="60px"
+                        android:layout_height="60px"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@+id/self_IV_Avatar"
+                        app:layout_constraintStart_toEndOf="@+id/self_IV_CircleBack"
+                        app:srcCompat="@drawable/icon_button_accept_blue_circle" />
+
+                    <ImageView
+                        android:id="@+id/self_IV_Decline"
+                        android:layout_width="60px"
+                        android:layout_height="60px"
+                        android:visibility="invisible"
+                        app:layout_constraintStart_toEndOf="@+id/self_IV_CircleBack"
+                        app:layout_constraintTop_toTopOf="@+id/self_IV_Avatar"
+                        app:srcCompat="@drawable/icon_decline_red_circle" />
+
+                    <TextView
+                        android:id="@+id/self_TV_Nickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_bold"
+                        android:text="Nickname"
+                        android:textColor="@color/white"
+                        android:textSize="30px"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/self_IV_CircleBack" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/self_CL_WrapPointsAge"
+                        android:layout_width="350px"
+                        android:layout_height="60px"
+                        android:layout_marginTop="20px"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/self_TV_Nickname">
+
+                        <LinearLayout
+                            android:id="@+id/self_LL_WrapPointsBottomSeparator"
+                            android:layout_width="0dp"
+                            android:layout_height="0.5dp"
+                            android:background="@color/gui_text_whitish"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"></LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/self_LL_MiddleWrap"
+                            android:layout_width="0.5dp"
+                            android:layout_height="45px"
+                            android:background="@color/gui_text_whitish"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/self_IV_Droplets"
+                            android:layout_width="40px"
+                            android:layout_height="40px"
+                            android:tint="@color/blue_hex1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/droplets" />
+
+                        <TextView
+                            android:id="@+id/self_TV_DropletsCount"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="0"
+                            android:textAlignment="textStart"
+                            android:textColor="@color/gui_text_whitish"
+                            android:textSize="20px"
+                            app:layout_constraintEnd_toStartOf="@+id/self_LL_MiddleWrap"
+                            app:layout_constraintStart_toEndOf="@+id/self_IV_Droplets"
+                            app:layout_constraintTop_toTopOf="@+id/self_IV_Droplets" />
+
+                        <TextView
+                            android:id="@+id/self_TV_Droplets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Droplets"
+                            android:textColor="@color/gui_text_hint"
+                            android:textSize="14px"
+                            app:layout_constraintStart_toStartOf="@+id/self_TV_DropletsCount"
+                            app:layout_constraintTop_toBottomOf="@+id/self_TV_DropletsCount" />
+
+                        <ImageView
+                            android:id="@+id/self_IV_Age"
+                            android:layout_width="40px"
+                            android:layout_height="40px"
+                            android:tint="@color/blue_hex1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/age" />
+
+                        <TextView
+                            android:id="@+id/self_TV_AgeCount"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="10y 11m 29d"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/gui_text_whitish"
+                            android:textSize="20px"
+                            app:layout_constraintEnd_toStartOf="@+id/self_IV_Age"
+                            app:layout_constraintStart_toEndOf="@+id/self_LL_MiddleWrap"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/self_TV_Age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Cloud Age"
+                            android:textColor="@color/gui_text_hint"
+                            android:textSize="14px"
+                            app:layout_constraintEnd_toEndOf="@+id/self_TV_AgeCount"
+                            app:layout_constraintTop_toBottomOf="@+id/self_TV_AgeCount" />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <LinearLayout
+                        android:id="@+id/self_LL_Settings_Wrap"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="40px"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="@+id/self_CL_WrapPointsAge"
+                        app:layout_constraintStart_toStartOf="@+id/self_CL_WrapPointsAge"
+                        app:layout_constraintTop_toBottomOf="@+id/self_CL_WrapPointsAge">
+
+                        <android.support.constraint.ConstraintLayout
+                            android:id="@+id/self_CL_Setting_Switch"
+                            android:layout_width="match_parent"
+                            android:layout_height="50px"
+                            android:background="@drawable/background_settings_blocks"
+                            android:orientation="vertical">
+
+                            <Switch
+                                android:id="@+id/self_Switch"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:checked="true"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Dark mode"
+                                android:textColor="@color/gui_text_whitish"
+                                android:textSize="20px"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:checked="true" />
+                        </android.support.constraint.ConstraintLayout>
+
+                        <android.support.constraint.ConstraintLayout
+                            android:id="@+id/self_CL_Setting_Logout"
+                            android:layout_width="match_parent"
+                            android:layout_height="50px"
+                            android:background="@drawable/background_settings_blocks_bottom">
+
+                            <TextView
+                                android:id="@+id/self_TV_Logout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Logout"
+                                android:textColor="@color/gui_text_whitish"
+                                android:textSize="20px"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:id="@+id/self_IV_Logout"
+                                android:layout_width="30px"
+                                android:layout_height="30px"
+                                android:tint="@color/gui_text_white"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/icon_logout" />
+                        </android.support.constraint.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

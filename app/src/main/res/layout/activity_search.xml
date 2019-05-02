@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_CL_Main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gui_gray_mid"
+    tools:context=".SearchActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search_CL_Header"
+        android:layout_width="0dp"
+        android:layout_height="64px"
+        android:background="@color/gui_gray_mid"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/search_IB_Back"
+            android:layout_width="50px"
+            android:layout_height="50px"
+            android:layout_marginStart="28px"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icon_arrow_left" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/search_CL_Search"
+            android:layout_width="0dp"
+            android:layout_height="50px"
+            android:layout_marginStart="28px"
+            android:layout_marginEnd="28px"
+            android:background="@color/gui_gray_normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/search_IB_Back"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/search_ET_Search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20px"
+                android:layout_marginEnd="10px"
+                android:background="@color/transparent"
+                android:ems="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="Search"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:textAlignment="textStart"
+                android:textColor="@color/gui_text_white"
+                android:textColorHint="@color/gui_text_hint"
+                android:textSize="20px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/search_IB_Search"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/search_IB_Search"
+                android:layout_width="30px"
+                android:layout_height="30px"
+                android:layout_marginEnd="20px"
+                android:background="@color/transparent"
+                android:scaleType="fitXY"
+                android:tint="@color/gui_text_hint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_find" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/search_SV_Results"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_CL_Header">
+
+        <LinearLayout
+            android:id="@+id/search_LL_Results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/search_LL_People"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/search_CL_People"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/search_TV_People"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="PEOPLE"
+                        android:textAlignment="center"
+                        android:textColor="@color/gui_text_whitish"
+                        android:textSize="14px"
+                        android:textStyle="bold"
+                        android:visibility="invisible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/search_LL_PeopleFriends" />
+
+                    <LinearLayout
+                        android:id="@+id/search_LL_PeopleFriends"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/search_LL_PeopleResults"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/search_TV_People">
+
+                    </LinearLayout>
+
+                </android.support.constraint.ConstraintLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

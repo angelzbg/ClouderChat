@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#A2A3A3</color>
+    <color name="colorPrimaryDark">#232324</color>
+    <color name="colorAccent">#858888</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="black_transparent1">#C3000000</color>
+    <color name="violet_hex1">#745EFF</color>
+    <color name="violet_hex2">#6F5AF2</color>
+    <color name="blue_hex1">#4EB0E9</color>
+    <color name="blue_hex2">#46A7DF</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="half_transparent_white_tint">#c6ffffff</color>
+    <color name="text_lightgray1">#C1C1C1</color>
+    <color name="darkgray1">#808080</color>
+
+    <color name="gui_gray_dark">#151516</color>
+    <color name="gui_gray_mid">#232324</color>
+    <color name="gui_gray_normal">#353536</color>
+    <color name="gui_gray_light">#474747</color>
+    <color name="gui_text_white">#FFFFFF</color>
+    <color name="gui_text_whitish">#E7E7E7</color>
+    <color name="gui_text_hint">#535353</color>
+    <color name="gui_request_new">#616879</color>
+    <color name="gui_request_old">#353536</color>
+    <color name="gui_friends_back">#2C2C2E</color>
+    <color name="gui_online_color">#42f46b</color>
+    <color name="gui_gray_mid_80transp">#CB232324</color>
+</resources>

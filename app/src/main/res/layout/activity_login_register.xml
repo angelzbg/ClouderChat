@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginRegisterActivity">
+
+    <angelzani.clouderchat.UI.LockableScrollView
+        android:id="@+id/logreg_SV_Main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/logreg_LL_Main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_login_register"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/login_CL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/login_IV_Background"
+                        android:layout_width="480px"
+                        android:layout_height="680px"
+                        android:scaleType="fitXY"
+                        android:tint="@color/gui_gray_normal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/roundback1" />
+
+                    <ImageView
+                        android:id="@+id/login_IV_Arrow"
+                        android:layout_width="28px"
+                        android:layout_height="28px"
+                        android:layout_marginEnd="19px"
+                        android:layout_marginBottom="23px"
+                        android:background="@drawable/background_buttons_circle_violet"
+                        android:tint="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:srcCompat="@drawable/icon_arrow_up" />
+
+                    <Button
+                        android:id="@+id/login_B_Login"
+                        android:layout_width="240px"
+                        android:layout_height="48px"
+                        android:layout_marginEnd="35px"
+                        android:layout_marginBottom="170px"
+                        android:background="@drawable/icon_button_login"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Login"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="25px"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/login_IV_Logo"
+                        android:layout_width="240px"
+                        android:layout_height="120px"
+                        android:layout_marginTop="50px"
+                        android:tint="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/clouderchat_logo" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/login_CL_WrapInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="35px"
+                        android:layout_marginEnd="35px"
+                        app:layout_constraintBottom_toTopOf="@+id/login_B_Login"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/login_IV_Logo">
+
+                        <EditText
+                            android:id="@+id/login_ET_Email"
+                            android:layout_width="0dp"
+                            android:layout_height="75px"
+                            android:background="@color/transparent"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:gravity="center_vertical"
+                            android:hint="Email"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/gui_text_white"
+                            android:textColorHint="@color/gui_text_hint"
+                            android:textSize="25px"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:id="@+id/login_View_Split1"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/text_lightgray1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/login_ET_Email" />
+
+                        <ImageView
+                            android:id="@+id/login_IV_Email"
+                            android:layout_width="25px"
+                            android:layout_height="25px"
+                            android:tint="@color/gui_text_whitish"
+                            app:layout_constraintBottom_toBottomOf="@+id/login_ET_Email"
+                            app:layout_constraintEnd_toEndOf="@+id/login_ET_Email"
+                            app:layout_constraintTop_toTopOf="@+id/login_ET_Email"
+                            app:srcCompat="@drawable/icon_email" />
+
+                        <EditText
+                            android:id="@+id/login_ET_Password"
+                            android:layout_width="0dp"
+                            android:layout_height="75px"
+                            android:background="@color/transparent"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:hint="Password"
+                            android:inputType="textPassword"
+                            android:textColor="@color/gui_text_white"
+                            android:textColorHint="@color/gui_text_hint"
+                            android:textSize="25px"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/login_View_Split1" />
+
+                        <ImageView
+                            android:id="@+id/login_IV_Password"
+                            android:layout_width="25px"
+                            android:layout_height="25px"
+                            android:tint="@color/gui_text_whitish"
+                            app:layout_constraintBottom_toBottomOf="@+id/login_ET_Password"
+                            app:layout_constraintEnd_toEndOf="@+id/login_ET_Password"
+                            app:layout_constraintTop_toTopOf="@+id/login_ET_Password"
+                            app:srcCompat="@drawable/icon_password" />
+
+                        <View
+                            android:id="@+id/login_View_Split2"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/text_lightgray1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/login_ET_Password" />
+
+                        <TextView
+                            android:id="@+id/login_TV_Forgot"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="25px"
+                            android:fontFamily="@font/roboto_light"
+                            android:text="Forgotten Password?"
+                            android:textColor="@color/text_lightgray1"
+                            android:textSize="20px"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/login_View_Split2" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/register_CL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/login_CL">
+
+                    <ImageView
+                        android:id="@+id/register_IV_Background"
+                        android:layout_width="480px"
+                        android:layout_height="680px"
+                        android:scaleType="fitXY"
+                        android:tint="@color/gui_gray_normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/roundback2" />
+
+                    <ImageView
+                        android:id="@+id/register_IV_Arrow"
+                        android:layout_width="28px"
+                        android:layout_height="28px"
+                        android:layout_marginStart="19px"
+                        android:layout_marginTop="23px"
+                        android:background="@drawable/background_buttons_circle_blue"
+                        android:tint="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/icon_arrow_up" />
+
+                    <Button
+                        android:id="@+id/register_B_Signup"
+                        android:layout_width="240px"
+                        android:layout_height="48px"
+                        android:layout_marginEnd="35px"
+                        android:layout_marginBottom="35px"
+                        android:background="@drawable/icon_button_signup"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Signup"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="25px"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/register_IV_Avatar"
+                        android:layout_width="100px"
+                        android:layout_height="100px"
+                        android:layout_marginTop="155px"
+                        android:background="@drawable/background_avatar_circle"
+                        android:padding="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/icon_upload_circle" />
+
+                    <ImageView
+                        android:id="@+id/register_IB_X"
+                        android:layout_width="25px"
+                        android:layout_height="25px"
+                        android:visibility="invisible"
+                        app:layout_constraintEnd_toEndOf="@+id/register_IV_Avatar"
+                        app:layout_constraintTop_toTopOf="@+id/register_IV_Avatar"
+                        app:srcCompat="@drawable/icon_button_x1" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/register_CL_WrapInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="35px"
+                        android:layout_marginEnd="35px"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/register_IV_Avatar">
+
+                        <EditText
+                            android:id="@+id/register_ET_Username"
+                            android:layout_width="0dp"
+                            android:layout_height="75px"
+                            android:background="@color/transparent"
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:hint="Username"
+                            android:inputType="text"
+                            android:maxLength="16"
+                            android:singleLine="true"
+                            android:textColor="@color/gui_text_white"
+                            android:textColorHint="@color/gui_text_hint"
+                            android:textSize="25px"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/register_IV_Username"
+                            android:layout_width="25px"
+                            android:layout_height="25px"
+                            android:tint="@color/gui_text_whitish"
+                            app:layout_constraintBottom_toBottomOf="@+id/register_ET_Username"
+                            app:layout_constraintEnd_toEndOf="@+id/register_ET_Username"
+                            app:layout_constraintTop_toTopOf="@+id/register_ET_Username"
+                            app:srcCompat="@drawable/icon_username" />
+
+                        <View
+                            android:id="@+id/register_View_Split1"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/text_lightgray1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_ET_Username" />
+
+                        <EditText
+                            android:id="@+id/register_ET_Email"
+                            android:layout_width="0dp"
+                            android:layout_height="75px"
+                            android:background="@color/transparent"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:hint="Email"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/gui_text_white"
+                            android:textColorHint="@color/gui_text_hint"
+                            android:textSize="25px"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_View_Split1" />
+
+                        <ImageView
+                            android:id="@+id/register_IV_Email"
+                            android:layout_width="25px"
+                            android:layout_height="25px"
+                            android:tint="@color/gui_text_whitish"
+                            app:layout_constraintBottom_toBottomOf="@+id/register_ET_Email"
+                            app:layout_constraintEnd_toEndOf="@+id/register_ET_Email"
+                            app:layout_constraintTop_toTopOf="@+id/register_ET_Email"
+                            app:srcCompat="@drawable/icon_email" />
+
+                        <View
+                            android:id="@+id/register_View_Split2"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/text_lightgray1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_ET_Email" />
+
+                        <EditText
+                            android:id="@+id/register_ET_Password"
+                            android:layout_width="0dp"
+                            android:layout_height="75px"
+                            android:background="@color/transparent"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:hint="Password"
+                            android:inputType="textPassword"
+                            android:textColor="@color/gui_text_white"
+                            android:textColorHint="@color/gui_text_hint"
+                            android:textSize="25px"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_View_Split2" />
+
+                        <ImageView
+                            android:id="@+id/register_IV_Password"
+                            android:layout_width="25px"
+                            android:layout_height="25px"
+                            android:tint="@color/gui_text_whitish"
+                            app:layout_constraintBottom_toBottomOf="@+id/register_ET_Password"
+                            app:layout_constraintEnd_toEndOf="@+id/register_ET_Password"
+                            app:layout_constraintTop_toTopOf="@+id/register_ET_Password"
+                            app:srcCompat="@drawable/icon_password" />
+
+                        <View
+                            android:id="@+id/register_View_Split3"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/text_lightgray1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_ET_Password" />
+
+                        <EditText
+                            android:id="@+id/register_ET_Confirm"
+                            android:layout_width="0dp"
+                            android:layout_height="75px"
+                            android:background="@color/transparent"
+                            android:ems="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:hint="Confirm Password"
+                            android:inputType="textPassword"
+                            android:textColor="@color/gui_text_white"
+                            android:textColorHint="@color/gui_text_hint"
+                            android:textSize="25px"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_View_Split3" />
+
+                        <ImageView
+                            android:id="@+id/register_IV_Confirm"
+                            android:layout_width="25px"
+                            android:layout_height="25px"
+                            android:tint="@color/gui_text_whitish"
+                            app:layout_constraintBottom_toBottomOf="@+id/register_ET_Confirm"
+                            app:layout_constraintEnd_toEndOf="@+id/register_ET_Confirm"
+                            app:layout_constraintTop_toTopOf="@+id/register_ET_Confirm"
+                            app:srcCompat="@drawable/icon_password" />
+
+                        <View
+                            android:id="@+id/register_View_Split4"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/text_lightgray1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/register_ET_Confirm" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/auth_CL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/register_CL"
+                    app:layout_constraintEnd_toEndOf="@+id/register_CL"
+                    app:layout_constraintStart_toStartOf="@+id/login_CL"
+                    app:layout_constraintTop_toBottomOf="@+id/login_CL">
+
+                    <ImageView
+                        android:id="@+id/auth_IV_Facebook2"
+                        android:layout_width="75px"
+                        android:layout_height="75px"
+                        android:layout_marginEnd="25px"
+                        android:layout_marginBottom="45px"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@+id/auth_IV_Twitter2"
+                        app:layout_constraintEnd_toStartOf="@+id/auth_IV_Twitter2"
+                        app:srcCompat="@drawable/icon_facebook2" />
+
+                    <ImageView
+                        android:id="@+id/auth_IV_Twitter2"
+                        android:layout_width="75px"
+                        android:layout_height="75px"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:srcCompat="@drawable/icon_twitter2" />
+
+                    <ImageView
+                        android:id="@+id/auth_IV_Google2"
+                        android:layout_width="75px"
+                        android:layout_height="75px"
+                        android:layout_marginEnd="25px"
+                        android:layout_marginBottom="45px"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@+id/auth_IV_Facebook2"
+                        app:layout_constraintEnd_toStartOf="@+id/auth_IV_Facebook2"
+                        app:srcCompat="@drawable/icon_google2" />
+
+                    <ImageView
+                        android:id="@+id/auth_IV_Facebook1"
+                        android:layout_width="75px"
+                        android:layout_height="75px"
+                        android:layout_marginStart="25px"
+                        android:layout_marginTop="45px"
+                        app:layout_constraintStart_toEndOf="@+id/auth_IV_Google1"
+                        app:layout_constraintTop_toTopOf="@+id/auth_IV_Google1"
+                        app:srcCompat="@drawable/icon_facebook" />
+
+                    <ImageView
+                        android:id="@+id/auth_IV_Google1"
+                        android:layout_width="75px"
+                        android:layout_height="75px"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/icon_google" />
+
+                    <ImageView
+                        android:id="@+id/auth_IV_Twitter1"
+                        android:layout_width="75px"
+                        android:layout_height="75px"
+                        android:layout_marginStart="25px"
+                        android:layout_marginTop="45px"
+                        android:layout_marginEnd="100px"
+                        android:layout_marginBottom="45px"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/auth_IV_Facebook1"
+                        app:layout_constraintTop_toTopOf="@+id/auth_IV_Facebook1"
+                        app:srcCompat="@drawable/icon_twitter" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+    </angelzani.clouderchat.UI.LockableScrollView>
+</android.support.constraint.ConstraintLayout>
