@@ -138,4 +138,56 @@ public class Utility {
         return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true);
     }//end of resizeBitmapTo1024pxMax()
 
+    public static Bitmap resizeBitmapToMini200pxMax(Bitmap bitmap){
+        if(bitmap==null) return null;
+
+        // Оразмеряване преди изпращане
+        final int maxWidth=200, maxHeight=200;
+        int finalWidth = 200, finalHeight = 200;
+        int bitmapWidth = bitmap.getWidth(), bitmapHeight = bitmap.getHeight();
+
+        if(bitmapWidth > maxWidth || bitmapHeight > maxHeight) { // трябва оразмеряване
+
+            if(bitmapWidth > maxWidth && bitmapHeight <= maxHeight) { // само ширината излиза извън размера
+                //Toast.makeText(getApplicationContext(), "Само ширината излиза извън размера", Toast.LENGTH_LONG).show();
+                finalWidth = 200;
+                double scale = (bitmapWidth*1.00) / (bitmapHeight*1.00);
+                finalHeight = (int) (finalWidth / scale);
+
+            } else if (bitmapHeight > maxHeight && bitmapWidth <= maxWidth) { // само височината излиза извън размера
+                //Toast.makeText(getApplicationContext(), "Само височината излиза извън размера", Toast.LENGTH_LONG).show();
+                finalHeight = 200;
+                double scale = (bitmapHeight*1.00)/(bitmapWidth*1.00);
+                finalWidth = (int)(finalHeight/scale);
+
+            } else { // и двете излизат извън размера
+                //Toast.makeText(getApplicationContext(), "И двете излизат извън размера", Toast.LENGTH_LONG).show();
+
+                if(bitmapWidth > bitmapHeight) { // ширината е по-голяма
+                    //Toast.makeText(getApplicationContext(), "И двете излизат извън размера -> ширината е по-голяма", Toast.LENGTH_LONG).show();
+                    finalWidth = 200;
+                    double scale = (bitmapWidth*1.00) / (bitmapHeight*1.00);
+                    finalHeight = (int) (finalWidth / scale);
+
+                } else if (bitmapHeight > bitmapWidth) { // височината е по-голяма
+                    //Toast.makeText(getApplicationContext(), "И двете излизат извън размера -> височината е по-голяма", Toast.LENGTH_LONG).show();
+                    finalHeight = 200;
+                    double scale = (bitmapHeight*1.00)/(bitmapWidth*1.00);
+                    finalWidth = (int)(finalHeight/scale);
+
+                } else if(bitmapHeight == bitmapWidth) { // равни са -> квадрат
+                    //Toast.makeText(getApplicationContext(), "И двете излизат извън размера -> квадрат", Toast.LENGTH_LONG).show();
+                    finalWidth = 200;
+                    finalHeight = 200;
+                }
+
+            }
+
+        } else { // не трябва оразмряване
+            return bitmap;
+        }
+
+        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true);
+    }//end of resizeBitmapTo1024pxMax()
+
 }

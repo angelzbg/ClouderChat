@@ -17,12 +17,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -152,6 +150,7 @@ public class AppActivity extends AppCompatActivity {
                 if(bitmap==null) return; //едва ли, но все пак
 
                 final SendPrivChatModel messageToSend = new SendPrivChatModel(user.getUid(), Utility.BitMapToString(bitmap), 2);
+                bitmap.recycle();
                 final String friendUID = private_chat_friend;
                 dbRef.child("privateChats").child(friendUID).push().setValue(messageToSend, new DatabaseReference.CompletionListener() {
                     @Override
@@ -162,7 +161,7 @@ public class AppActivity extends AppCompatActivity {
                             final PrivChatModel messageToSave = new PrivChatModel(friendUID, messageToSend.getSender(), messageToSend.getMessage(), messageToSend.getType(), System.currentTimeMillis());
                             db.addMessage(messageToSave);
                             if(friendUID.equals(private_chat_friend)){ // искаме да се уверим, че след като е изпратено съобщението успешно, юзъра вече не е затворил прозореца и да е отворил друг чат за да не показваме съобщението там
-                                showMessageInThePrivateChat(friendUID, messageToSave, "bottom");
+                                showMessageInThePrivateChat(friendUID, messageToSave, "bottom", true);
                             }
                             //Да заредим съобщението в листа с чатове (т'ва нещо за да се изчисти и да се вика по 2/3 различни начина от един метод ще отнеме много време -> не си струва занимавката)
                             int childrenCount = app_LL_Chats.getChildCount();
@@ -819,6 +818,7 @@ public class AppActivity extends AppCompatActivity {
                                 bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                 String base64String = Utility.BitMapToString(bitmap);
                                 um.setAvatarString(base64String);
+                                bitmap.recycle();
 
                                 db.updateUser(um);
                                 LoadSelfProfile();
@@ -928,7 +928,7 @@ public class AppActivity extends AppCompatActivity {
         app_IB_BigImageClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app_IV_BigImage.setImageBitmap(null); // garbage collectora да си свърши работата
+                app_IV_BigImage.setImageBitmap(null); // garbage collectora да си свърши работата (само дето с битмепа май не си върши работата...)
                 app_IB_BigImageSave.setOnClickListener(null); // същото
                 app_CL_BigImage.setVisibility(View.INVISIBLE);
             }
@@ -1282,8 +1282,6 @@ public class AppActivity extends AppCompatActivity {
     private View.OnClickListener menuSwitcher = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //Animation expandInBox = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_in_slow);
-            //Animation expandOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_out);
             Animation expandOutHorizontal = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_out_horizontal);
             switch (v.getId()){
                 case R.id.app_IB_Chat_Menu:
@@ -1335,7 +1333,7 @@ public class AppActivity extends AppCompatActivity {
                         final PrivChatModel messageToSave = new PrivChatModel(friendUID, messageToSend.getSender(), messageToSend.getMessage(), messageToSend.getType(), System.currentTimeMillis());
                         db.addMessage(messageToSave);
                         if(friendUID.equals(private_chat_friend)){ // искаме да се уверим, че след като е изпратено съобщението успешно, юзъра вече не е затворил прозореца и да е отворил друг чат за да не показваме съобщението там
-                            showMessageInThePrivateChat(friendUID, messageToSave, "bottom");
+                            showMessageInThePrivateChat(friendUID, messageToSave, "bottom", true);
                         }
                         //Да заредим съобщението в листа с чатове (т'ва нещо за да се изчисти и да се вика по 2/3 различни начина от един метод ще отнеме много време -> не си струва занимавката)
                         int childrenCount = app_LL_Chats.getChildCount();
@@ -1639,6 +1637,7 @@ public class AppActivity extends AppCompatActivity {
                                                                             bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                                                             String base64String = Utility.BitMapToString(bitmap);
                                                                             searched_user.setAvatarString(base64String);
+                                                                            bitmap.recycle();
 
                                                                             db.updateUser(searched_user);
 
@@ -1715,6 +1714,7 @@ public class AppActivity extends AppCompatActivity {
                                                                 bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                                                 String base64String = Utility.BitMapToString(bitmap);
                                                                 new_user.setAvatarString(base64String);
+                                                                bitmap.recycle();
 
                                                                 db.updateUser(new_user);
 
@@ -1801,6 +1801,7 @@ public class AppActivity extends AppCompatActivity {
                                         bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                         String base64String = Utility.BitMapToString(bitmap);
                                         currentLocalUser.setAvatarString(base64String);
+                                        bitmap.recycle();
 
                                         db.updateUser(currentLocalUser);
 
@@ -1927,9 +1928,14 @@ public class AppActivity extends AppCompatActivity {
                             db.removeFriend(user.getUid(), friendUID);
                         }
                     }
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // показване на съобщение на потребителя къде може да потърси своите приятели, понеже очевидно няма никакви <--------------------------------------------------------------||||||||
                 }
 
-                // След като свършихме досадната работа можем да започнем начисто със зареждането на информацията от датабазите:
                 loadFriendList();
                 loadPrivateChats();
             }
@@ -2103,6 +2109,7 @@ public class AppActivity extends AppCompatActivity {
                                                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                                     bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                                     String base64String = Utility.BitMapToString(bitmap);
+                                                    bitmap.recycle();
 
                                                     existing_user.setAvatarString(base64String);
                                                     db.updateUser(existing_user);
@@ -2168,7 +2175,7 @@ public class AppActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
 
-                } else { // потребителят не е бил зареждан преди ба това устройство -> ще се нуждае от създаване на юзър в датабазата и зареждане на всичко
+                } else { // потребителят не е бил зареждан преди на това устройство -> ще се нуждае от създаване на юзър в датабазата и зареждане на всичко
 
                     final UserModel new_user = new UserModel();
                     new_user.setUid(friendUID);
@@ -2212,6 +2219,7 @@ public class AppActivity extends AppCompatActivity {
                                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                         bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                         String base64String = Utility.BitMapToString(bitmap);
+                                        bitmap.recycle();
 
                                         new_user.setAvatarString(base64String);
                                         db.updateUser(new_user);
@@ -2368,8 +2376,6 @@ public class AppActivity extends AppCompatActivity {
         final ConstraintLayout CL_Request = new ConstraintLayout(getApplicationContext());
         CL_Request.setId(View.generateViewId());
         CL_Request.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        app_LL_Requests.addView(CL_Request);
-        Utility.setMargins(CL_Request, layout_margin_start_end/2, layout_margin_start_end/4, layout_margin_start_end/2, 0);
 
         final ImageView IV_Avatar = new ImageView(getApplicationContext());
         IV_Avatar.setId(View.generateViewId());
@@ -2451,9 +2457,11 @@ public class AppActivity extends AppCompatActivity {
         CL_Request.setBackground(gdRequestBack);
 
         if(isNew) {
-            app_LL_Requests.removeView(CL_Request);
             app_LL_Requests.addView(CL_Request, 0);
+        } else {
+            app_LL_Requests.addView(CL_Request);
         }
+        Utility.setMargins(CL_Request, layout_margin_start_end/2, layout_margin_start_end/4, layout_margin_start_end/2, 0);
 
         int notifications_count = app_LL_Requests.getChildCount();
         if(notifications_count > 0){
@@ -2505,6 +2513,7 @@ public class AppActivity extends AppCompatActivity {
                                 bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                 String base64String = Utility.BitMapToString(bitmap);
                                 existing_user.setAvatarString(base64String);
+                                bitmap.recycle();
 
                                 db.updateUser(existing_user);
 
@@ -2569,6 +2578,7 @@ public class AppActivity extends AppCompatActivity {
                                 bitmap = Utility.CropBitmapCenterCircle(bitmap);
                                 String base64String = Utility.BitMapToString(bitmap);
                                 new_user.setAvatarString(base64String);
+                                bitmap.recycle();
 
                                 db.updateUser(new_user);
 
@@ -2699,8 +2709,8 @@ public class AppActivity extends AppCompatActivity {
 
                 final ConstraintLayoutPrivChat layoutPrivChat = new ConstraintLayoutPrivChat(getApplicationContext());
                 layoutPrivChat.setFriendUID(friendUID);
-                app_LL_Chats.addView(layoutPrivChat);
-                Utility.setMargins(layoutPrivChat, layout_margin_start_end / 2, layout_margin_start_end / 4, layout_margin_start_end / 2, 0);
+                //app_LL_Chats.addView(layoutPrivChat);
+                //Utility.setMargins(layoutPrivChat, layout_margin_start_end / 2, layout_margin_start_end / 4, layout_margin_start_end / 2, 0);
                 layoutPrivChat.setBackground(gdChatsBackRead);
 
                 ImageView IV_Avatar = layoutPrivChat.IV_Avatar;
@@ -2772,6 +2782,9 @@ public class AppActivity extends AppCompatActivity {
                     }
                 });
 
+                app_LL_Chats.addView(layoutPrivChat);
+                Utility.setMargins(layoutPrivChat, layout_margin_start_end / 2, layout_margin_start_end / 4, layout_margin_start_end / 2, 0);
+
                 /*if (i == count - 1) {
                     listenForPrivChats();
                 }*/
@@ -2780,7 +2793,7 @@ public class AppActivity extends AppCompatActivity {
         } /*else {
             listenForPrivChats();
         }*/
-        app_IB_Chat_Menu.performClick();
+        if(app_LL_Chats.getChildCount() > 0) app_IB_Chat_Menu.performClick(); // ако потребителят няма никакви чатова, няма смисъл да отиваме там
         listenForPrivChats();
     }// end of loadPrivateChats()
 
@@ -2795,15 +2808,18 @@ public class AppActivity extends AppCompatActivity {
                         if(bitmap==null) return; // стринга, който е изпратен не е изображение
 
                         // Оразмеряване преди запаметяваме -> ако някой изпрати по-голяма картинка в датабазата (а това може да стане без проблем, няма валидация на стринга) потребителят, на когото е изпратена, ще има проблеми с паметта на заявките или просто ще крашне с OOME заради големината на bitmapa, който се опитваме да възпроизведем
-                        bitmap = Utility.resizeBitmapTo1024pxMax(bitmap);
+                        if(bitmap.getWidth() > 1024 || bitmap.getHeight() > 1024) {
+                            bitmap = Utility.resizeBitmapTo1024pxMax(bitmap);
+                            // Преправяне на base64 stringa за да се запише в датабазата (преправяне само ако не е бил наред)
+                            message.setMessage(Utility.BitMapToString(bitmap));
+                            bitmap.recycle();
+                        }
 
-                        // Преправяне на base64 stringa за да се запише в датабазата (преправяне само ако не е бил наред)
-                        message.setMessage(Utility.BitMapToString(bitmap));
                     }
                     db.addMessage(message);
                     dbRef.child("privateChats").child(user.getUid()).child(dataSnapshot.getKey()).removeValue(); // не държим изтеглени съобщения в датабазата -> липса на синхронизация (все тая)
 
-                    if(private_chat_friend.equals(message.getSenderUID())) showMessageInThePrivateChat(message.getSenderUID(), message, "bottom");
+                    if(private_chat_friend.equals(message.getSenderUID())) showMessageInThePrivateChat(message.getSenderUID(), message, "bottom", true);
 
                     if (app_CL_Chats.getVisibility() == View.INVISIBLE && !private_chat_friend.equals(message.getSenderUID())) {
                         app_TV_ChatNew.setVisibility(View.VISIBLE);
@@ -2850,8 +2866,6 @@ public class AppActivity extends AppCompatActivity {
 
                         final ConstraintLayoutPrivChat layoutPrivChat = new ConstraintLayoutPrivChat(getApplicationContext());
                         layoutPrivChat.setFriendUID(message.getSenderUID());
-                        app_LL_Chats.addView(layoutPrivChat, 0); // най-горе
-                        Utility.setMargins(layoutPrivChat, layout_margin_start_end / 2, layout_margin_start_end / 4, layout_margin_start_end / 2, 0);
                         layoutPrivChat.setBackground(gdChatsBackRead);
 
                         ImageView IV_Avatar = layoutPrivChat.IV_Avatar;
@@ -2883,9 +2897,10 @@ public class AppActivity extends AppCompatActivity {
                             TV_Nick.setText("");
                             IV_Avatar.setImageResource(R.drawable.clouder_avatar_default);
                         } else { // имаме юзъра
-                            TV_Nick.setText(db.getUser(message.getSenderUID()).getNick());
+                            UserModel friend = db.getUser(message.getSenderUID());
+                            TV_Nick.setText(friend.getNick());
                             if (!db.getUser(message.getSenderUID()).getAvatar().equals("default")) {
-                                IV_Avatar.setImageBitmap(Utility.StringToBitMap(db.getUser(message.getSenderUID()).getAvatarString()));
+                                IV_Avatar.setImageBitmap(Utility.StringToBitMap(friend.getAvatarString()));
                             } else {
                                 IV_Avatar.setImageResource(R.drawable.clouder_avatar_default);
                             }
@@ -2916,6 +2931,9 @@ public class AppActivity extends AppCompatActivity {
                                 openPrivateChat(message.getSenderUID());
                             }
                         });
+
+                        app_LL_Chats.addView(layoutPrivChat, 0); // най-горе
+                        Utility.setMargins(layoutPrivChat, layout_margin_start_end / 2, layout_margin_start_end / 4, layout_margin_start_end / 2, 0);
                     }
 
                     if (app_LL_PrivChatBody.getChildCount() == 1) { // искаме да вземем датата най-старото съобщение в чата, в случай, че потребителят до сега не си е писал с този човек ще се прецака много жестоко цялата система и ще тегли едни и същи съобщения -> за това се подсигуряваме
@@ -2979,7 +2997,7 @@ public class AppActivity extends AppCompatActivity {
             int lastIndex = messages.size() - 1;
             for (int i = lastIndex; i > -1; i--) {
                 final PrivChatModel message = messages.get(i);
-                showMessageInThePrivateChat(friendUID, message, "bottom");
+                showMessageInThePrivateChat(friendUID, message, "bottom", false);
             }//end of for loop
             private_chat_oldest_date_loaded = messages.get(messages.size()-1).getDate();
         }
@@ -2993,7 +3011,7 @@ public class AppActivity extends AppCompatActivity {
 
     }// end of openPrivateChat()
 
-    private void showMessageInThePrivateChat(String friendUID, final PrivChatModel message, String place) {
+    private void showMessageInThePrivateChat(String friendUID, final PrivChatModel message, String place, boolean isNew) {
         if (message.getType() == 1) { // имаме просто текст
 
             ConstraintLayout_UID_Date CL_MessageWrap = new ConstraintLayout_UID_Date(getApplicationContext(), message.getSenderUID(), message.getDate());
@@ -3004,8 +3022,6 @@ public class AppActivity extends AppCompatActivity {
             } else {
                 params.gravity = Gravity.RIGHT;
             }
-            if(place.equals("bottom")) app_LL_PrivChatBody.addView(CL_MessageWrap, params); // долу
-            else  app_LL_PrivChatBody.addView(CL_MessageWrap, 0, params); // горе
 
             TextView TV_Message = new TextView(getApplicationContext());
             TV_Message.setId(View.generateViewId());
@@ -3058,7 +3074,7 @@ public class AppActivity extends AppCompatActivity {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(CL_MessageWrap);
             if (message.getSenderUID().equals(friendUID)) {
-                Utility.setMargins(CL_MessageWrap, h_div_160,0,h_div_14,h_div_160);
+                //Utility.setMargins(CL_MessageWrap, h_div_160,0,h_div_14,h_div_160);
                 TV_Message.setBackground(gdMessageReceived);
                 if(showDate){
                     cs.connect(TV_Date.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
@@ -3072,7 +3088,7 @@ public class AppActivity extends AppCompatActivity {
                 cs.connect(TV_Message.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
                 //cs.connect(TV_Message.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
             } else {
-                Utility.setMargins(CL_MessageWrap, h_div_14,0,h_div_160,h_div_160);
+                //Utility.setMargins(CL_MessageWrap, h_div_14,0,h_div_160,h_div_160);
                 TV_Message.setBackground(gdMessageSent);
                 if(showDate){
                     cs.connect(TV_Date.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
@@ -3091,6 +3107,14 @@ public class AppActivity extends AppCompatActivity {
             if(showDate) TV_Date.setPadding(h_div_60,0,h_div_60,0);
             TV_Message.setPadding(h_div_60,h_div_120,h_div_60,h_div_120);
 
+            if(place.equals("bottom")) app_LL_PrivChatBody.addView(CL_MessageWrap, params); // долу
+            else  app_LL_PrivChatBody.addView(CL_MessageWrap, 0, params); // горе
+            if (message.getSenderUID().equals(friendUID)) {
+                Utility.setMargins(CL_MessageWrap, h_div_160,0,h_div_14,h_div_160);
+            } else {
+                Utility.setMargins(CL_MessageWrap, h_div_14,0,h_div_160,h_div_160);
+            }
+
             Animation expandOutSlow = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_out_slow);
             TV_Message.startAnimation(expandOutSlow);
 
@@ -3104,8 +3128,6 @@ public class AppActivity extends AppCompatActivity {
             } else {
                 params.gravity = Gravity.RIGHT;
             }
-            if(place.equals("bottom")) app_LL_PrivChatBody.addView(CL_MessageWrap, params); // долу
-            else  app_LL_PrivChatBody.addView(CL_MessageWrap, 0, params); // горе
 
             boolean showDate = true;
             long calculateDate = (Calendar.getInstance().getTime().getTime() - message.getDate()) / 1000 / 60; //времето в минути
@@ -3157,12 +3179,10 @@ public class AppActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "3. Width=Height |Width = " + IV_Message.getLayoutParams().width + " <-> Height = " + IV_Message.getLayoutParams().height + "|", Toast.LENGTH_LONG).show();
             }
 
-            //final Bitmap bitmapMini = Bitmap.createScaledBitmap(bitmap, IV_Message.getLayoutParams().width, IV_Message.getLayoutParams().height, true);
-
             ConstraintSet cs = new ConstraintSet();
             cs.clone(CL_MessageWrap);
             if (message.getSenderUID().equals(friendUID)) {
-                Utility.setMargins(CL_MessageWrap, h_div_160,0,h_div_14,h_div_160);
+                //Utility.setMargins(CL_MessageWrap, h_div_160,0,h_div_14,h_div_160);
                 if(showDate){
                     cs.connect(TV_Date.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
                     cs.connect(TV_Date.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
@@ -3175,7 +3195,7 @@ public class AppActivity extends AppCompatActivity {
                 cs.connect(IV_Message.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
                 //cs.connect(TV_Message.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
             } else {
-                Utility.setMargins(CL_MessageWrap, h_div_14,0,h_div_160,h_div_160);
+                //Utility.setMargins(CL_MessageWrap, h_div_14,0,h_div_160,h_div_160);
                 if(showDate){
                     cs.connect(TV_Date.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
                     cs.connect(TV_Date.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
@@ -3192,25 +3212,43 @@ public class AppActivity extends AppCompatActivity {
 
             if(showDate) TV_Date.setPadding(h_div_60,0,h_div_60,0);
 
-            //final BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
-            AppActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    IV_Message.setImageBitmap(bitmap);
-                    //IV_Message.setImageBitmap(bitmapMini);
-                    //IV_Message.setBackground(ob);
-                }
-            });
+            if(!isNew) {
+                IV_Message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // При натискане на изображението ще заржда изображението в по-голяма резолюця и вече при второ натискане ще отваря изображението в лейаута за разглеждане и запазване
+                        IV_Message.setImageBitmap(Utility.StringToBitMap(db.getImageFromMessage(message.getSenderUID(), message.getTargetUID(), message.getDate())));
+                        bitmap.recycle();
+                        IV_Message.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showBigImage(message.getSenderUID(), message.getTargetUID(), message.getDate());
+                            }
+                        });
+                    }
+                });
+            } else {
+                IV_Message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showBigImage(message.getSenderUID(), message.getTargetUID(), message.getDate());
+                    }
+                });
+            }
+
+            IV_Message.setImageBitmap(bitmap);
+
+            if(place.equals("bottom")) app_LL_PrivChatBody.addView(CL_MessageWrap, params); // долу
+            else  app_LL_PrivChatBody.addView(CL_MessageWrap, 0, params); // горе
+
+            if (message.getSenderUID().equals(friendUID)) {
+                Utility.setMargins(CL_MessageWrap, h_div_160,0,h_div_14,h_div_160);
+            } else {
+                Utility.setMargins(CL_MessageWrap, h_div_14,0,h_div_160,h_div_160);
+            }
 
             Animation expandOutSlow = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_out_slow);
             IV_Message.startAnimation(expandOutSlow);
-
-            IV_Message.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showBigImage(message.getSenderUID(), message.getTargetUID(), message.getDate());
-                }
-            });
 
         }
 
@@ -3296,7 +3334,7 @@ public class AppActivity extends AppCompatActivity {
         if (messages != null && messages.size() > 0) {
             for (int i = 0; i < messages.size(); i++) {
                 PrivChatModel message = messages.get(i);
-                showMessageInThePrivateChat(private_chat_friend, message, "top");
+                showMessageInThePrivateChat(private_chat_friend, message, "top", false);
             }//end of for loop
             private_chat_oldest_date_loaded = messages.get(messages.size()-1).getDate();
         }

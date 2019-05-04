@@ -6,9 +6,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
+
+import angelzani.clouderchat.Utility.Utility;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -54,6 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String PCHATS_DATE = "date";
     private static final String PCHATS_TYPE = "type";
     private static final String PCHATS_MESSAGE = "message";
+    private static final String PCHATS_MINI = "mini";
 
 
     //Query за създаване на таблиците
@@ -91,7 +95,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     PCHATS_SENDER_UID + "' TEXT, '" +
                     PCHATS_DATE + "' INTEGER, '" +
                     PCHATS_TYPE + "' INTEGER, '" +
-                    PCHATS_MESSAGE + "' BLOB );";
+                    PCHATS_MESSAGE + "' BLOB, '" +
+                    PCHATS_MINI + "' TEXT );";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -374,6 +379,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cv.put(PCHATS_DATE, chatMessage.getDate());
             cv.put(PCHATS_TYPE, chatMessage.getType());
             cv.put(PCHATS_MESSAGE, chatMessage.getMessage());
+            if(chatMessage.getType() == 2) {
+                Bitmap bitmap = Utility.StringToBitMap(chatMessage.getMessage());
+                bitmap = Utility.resizeBitmapToMini200pxMax(bitmap);
+                cv.put(PCHATS_MINI, Utility.BitMapToString(bitmap));
+                bitmap.recycle();
+            }
 
             db.insertOrThrow(TABLE_PRIVATE_CHATS, null, cv);
         } catch (SQLException e) {
@@ -384,23 +395,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     } // end of addMessage()
 
-    public PrivChatModel getLastMessageFromUser(String targetUID, String senderUID) {
+    public PrivChatModel getLastMessageFromUser(String targetUID, String senderUID) { // най-глупавия възможен начин, който вече ме мързи да оправям, надолу методите са с правилни кюрита...
         Cursor c = null;
         try {
             db = getReadableDatabase();
-            String query = "SELECT * FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_TARGET_UID + " LIKE '" + targetUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + senderUID + "' ORDER BY " + PCHATS_DATE + " DESC LIMIT 1;";
+            String query = "SELECT " + PCHATS_TARGET_UID + ", " + PCHATS_SENDER_UID + ", " + PCHATS_TYPE + ", " + PCHATS_DATE + " FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_TARGET_UID + " LIKE '" + targetUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + senderUID + "' ORDER BY " + PCHATS_DATE + " DESC LIMIT 1;";
 
             PrivChatModel privchatmessageFROM = null, privchatmessageTO = null;
 
             c = db.rawQuery(query, null);
             if (c.moveToFirst()) {
-                privchatmessageFROM = new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), c.getString(c.getColumnIndex(PCHATS_MESSAGE)), c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE)));
+                privchatmessageFROM = new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), "", c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE)));
+                if(privchatmessageFROM.getType() == 1) {
+                    privchatmessageFROM.setMessage(getTextFromMessage(privchatmessageFROM.getSenderUID(), privchatmessageFROM.getTargetUID(), privchatmessageFROM.getDate()));
+                }
             }
 
+            if(!db.isOpen()) db = getReadableDatabase();
             query = "SELECT * FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_TARGET_UID + " LIKE '" + senderUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + targetUID + "' ORDER BY " + PCHATS_DATE + " DESC LIMIT 1;";
             c = db.rawQuery(query, null);
             if (c.moveToFirst()) {
-                privchatmessageTO = new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), c.getString(c.getColumnIndex(PCHATS_MESSAGE)), c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE)));
+                privchatmessageTO = new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), "", c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE)));
+                if(privchatmessageTO.getType() == 1) {
+                    privchatmessageTO.setMessage(getTextFromMessage(privchatmessageTO.getSenderUID(), privchatmessageTO.getTargetUID(), privchatmessageTO.getDate()));
+                }
             }
 
             if (privchatmessageFROM != null && privchatmessageTO != null) {
@@ -431,13 +449,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = null;
         try {
             db = getReadableDatabase();
-            String query = "SELECT * FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_TARGET_UID + " LIKE '" + userUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + friendUID + "' OR " + PCHATS_TARGET_UID + " LIKE '" + friendUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + userUID + "' ORDER BY " + PCHATS_DATE + " DESC LIMIT 20;";
+            String query = "SELECT " + PCHATS_TARGET_UID + ", " + PCHATS_SENDER_UID + ", " + PCHATS_TYPE + ", " + PCHATS_DATE + " FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_TARGET_UID + " LIKE '" + userUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + friendUID + "' OR " + PCHATS_TARGET_UID + " LIKE '" + friendUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + userUID + "' ORDER BY " + PCHATS_DATE + " DESC LIMIT 20;";
 
             c = db.rawQuery(query, null);
             if (c.isBeforeFirst()) {
                 ArrayList<PrivChatModel> messages = new ArrayList<>();
                 while(c.moveToNext()){
-                    messages.add(new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), c.getString(c.getColumnIndex(PCHATS_MESSAGE)), c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE))));
+                    PrivChatModel message = new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), "", c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE)));
+                    if(message.getType() == 1) {
+                        message.setMessage(getTextFromMessage(message.getSenderUID(), message.getTargetUID(), message.getDate()));
+                    } else { // type = 2 -> изображение -> искаме само мини изображението
+                        message.setMessage(getMiniImageFromMessage(message.getSenderUID(), message.getTargetUID(), message.getDate()));
+                    }
+                    messages.add(message);
                 }
                 return messages;
             }
@@ -456,14 +480,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = null;
         try {
             db = getReadableDatabase();
-            String query = "SELECT * FROM " + TABLE_PRIVATE_CHATS + " WHERE (" + PCHATS_TARGET_UID + " LIKE '" + userUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + friendUID + "' OR " + PCHATS_TARGET_UID + " LIKE '" + friendUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + userUID + "') AND " + PCHATS_DATE + " < " + date + " ORDER BY " + PCHATS_DATE + " DESC LIMIT 5;";
+            String query = "SELECT " + PCHATS_TARGET_UID + ", " + PCHATS_SENDER_UID + ", " + PCHATS_TYPE + ", " + PCHATS_DATE + " FROM " + TABLE_PRIVATE_CHATS + " WHERE (" + PCHATS_TARGET_UID + " LIKE '" + userUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + friendUID + "' OR " + PCHATS_TARGET_UID + " LIKE '" + friendUID + "' AND " + PCHATS_SENDER_UID + " LIKE '" + userUID + "') AND " + PCHATS_DATE + " < " + date + " ORDER BY " + PCHATS_DATE + " DESC LIMIT 5;";
 
             c = db.rawQuery(query, null);
             if (c.isBeforeFirst()) {
                 ArrayList<PrivChatModel> messages = new ArrayList<>();
                 while(c.moveToNext()){
-                    messages.add(new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), c.getString(c.getColumnIndex(PCHATS_MESSAGE)), c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE))));
+                    PrivChatModel message = new PrivChatModel(c.getString(c.getColumnIndex(PCHATS_TARGET_UID)), c.getString(c.getColumnIndex(PCHATS_SENDER_UID)), "", c.getInt(c.getColumnIndex(PCHATS_TYPE)), c.getLong(c.getColumnIndex(PCHATS_DATE)));
+                    if(message.getType() == 1) {
+                        message.setMessage(getTextFromMessage(message.getSenderUID(), message.getTargetUID(), message.getDate()));
+                    } else { // type = 2 -> изображение -> искаме само мини изображението
+                        message.setMessage(getMiniImageFromMessage(message.getSenderUID(), message.getTargetUID(), message.getDate()));
+                    }
+                    messages.add(message);
                 }
+
                 return messages;
             }
 
@@ -484,8 +515,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String query = "SELECT " + PCHATS_MESSAGE + " FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_SENDER_UID + " LIKE '" + senderUID + "' AND " + PCHATS_TARGET_UID + " LIKE '" + targetUID + "' AND " + PCHATS_DATE + " = " + date + " AND " + PCHATS_TYPE + " = 2;"; // трябва да върне само едно
 
             c = db.rawQuery(query, null);
-            if (c.isBeforeFirst()) {
-                c.moveToFirst(); // за всеки случай нека да е само един резултата
+            if (c.moveToFirst()) {
                 String imageString = c.getString(c.getColumnIndex(PCHATS_MESSAGE));
                 return imageString;
             }
@@ -499,6 +529,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }// end of getImageFromMessage()
+
+    public String getMiniImageFromMessage(String senderUID, String targetUID, long date) {
+        Cursor c = null;
+        try {
+            db = getReadableDatabase();
+            String query = "SELECT " + PCHATS_MINI + " FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_SENDER_UID + " LIKE '" + senderUID + "' AND " + PCHATS_TARGET_UID + " LIKE '" + targetUID + "' AND " + PCHATS_DATE + " = " + date + " AND " + PCHATS_TYPE + " = 2;"; // трябва да върне само едно
+
+            c = db.rawQuery(query, null);
+            if (c.moveToFirst()) {
+                String imageString = c.getString(c.getColumnIndex(PCHATS_MINI));
+                return imageString;
+            }
+
+        } catch (SQLException e) {
+            Log.e("SQLException", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (c != null) c.close();
+            if (db != null) db.close();
+        }
+        return null;
+    }// end of getMiniImageFromMessage()
+
+    public String getTextFromMessage(String senderUID, String targetUID, long date) {
+        Cursor c = null;
+        try {
+            db = getReadableDatabase();
+            String query = "SELECT " + PCHATS_MESSAGE + " FROM " + TABLE_PRIVATE_CHATS + " WHERE " + PCHATS_SENDER_UID + " LIKE '" + senderUID + "' AND " + PCHATS_TARGET_UID + " LIKE '" + targetUID + "' AND " + PCHATS_DATE + " = " + date + " AND " + PCHATS_TYPE + " = 1;"; // трябва да върне само едно
+
+            c = db.rawQuery(query, null);
+            if (c.moveToFirst()) {
+                String textString = c.getString(c.getColumnIndex(PCHATS_MESSAGE));
+                return textString;
+            }
+
+        } catch (SQLException e) {
+            Log.e("SQLException", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (c != null) c.close();
+            if (db != null) db.close();
+        }
+        return null;
+    }// end of getTextFromMessage()
 
     // -------------------------------------------------- PRIVATE CHATS [  END  ]
 
