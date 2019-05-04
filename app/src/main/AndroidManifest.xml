@@ -22,10 +22,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SearchActivity"
-            android:configChanges="orientation|keyboardHidden"
-             />
-        <activity
             android:name=".LoginRegisterActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait">
@@ -38,10 +34,6 @@
         <activity
             android:name=".AppActivity"
             android:launchMode="singleInstance"
-            android:configChanges="orientation|keyboardHidden"
-             />
-        <activity
-            android:name=".SelfProfileActivity"
             android:configChanges="orientation|keyboardHidden"
              />
     </application>
