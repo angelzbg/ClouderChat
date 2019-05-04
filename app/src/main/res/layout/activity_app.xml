@@ -900,4 +900,47 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/welcome_CL_Main"
+        android:layout_width="0dp"
+        android:layout_height="64px"
+        android:layout_marginStart="5px"
+        android:layout_marginTop="5px"
+        android:layout_marginEnd="5px"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_CL_Header">
+
+        <TextView
+            android:id="@+id/welcome_TV_Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Welcome to ClouderChat! Click over the search box to find your friends."
+            android:textAlignment="center"
+            android:textColor="@color/gui_text_white"
+            android:textSize="18px"
+            app:layout_constraintBottom_toBottomOf="@+id/welcome_IB_Close"
+            app:layout_constraintEnd_toStartOf="@+id/welcome_IB_Close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/welcome_IB_Close" />
+
+        <ImageButton
+            android:id="@+id/welcome_IB_Close"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="5px"
+            android:layout_marginEnd="5px"
+            android:layout_marginBottom="5px"
+            android:adjustViewBounds="true"
+            android:background="@color/transparent"
+            android:scaleType="fitCenter"
+            android:tint="@color/violet_hex2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icon_arrow_right" />
+    </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>

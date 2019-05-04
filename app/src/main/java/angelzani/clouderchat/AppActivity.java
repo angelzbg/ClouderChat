@@ -384,6 +384,11 @@ public class AppActivity extends AppCompatActivity {
     private ImageButton app_IB_BigImageClose;
     private ImageButton app_IB_BigImageSave;
 
+    // Welcome box
+    private ConstraintLayout welcome_CL_Main;
+    private TextView welcome_TV_Text;
+    private ImageButton welcome_IB_Close;
+
     // Firebase
     private FirebaseAuth mAuth;
     private FirebaseDatabase fireDB;
@@ -498,6 +503,11 @@ public class AppActivity extends AppCompatActivity {
         app_CL_BigImageMenu = findViewById(R.id.app_CL_BigImageMenu);
         app_IB_BigImageClose = findViewById(R.id.app_IB_BigImageClose);
         app_IB_BigImageSave = findViewById(R.id.app_IB_BigImageSave);
+
+        // Welcome box <-----
+        welcome_CL_Main = findViewById(R.id.welcome_CL_Main);
+        welcome_TV_Text = findViewById(R.id.welcome_TV_Text);
+        welcome_IB_Close = findViewById(R.id.welcome_IB_Close);
 
 
         // ----- Resizing [ НАЧАЛО ]
@@ -782,6 +792,26 @@ public class AppActivity extends AppCompatActivity {
         Utility.setMargins(app_IB_BigImageClose, 0,h_div_80,h_div_80,h_div_80);
         Utility.setMargins(app_IB_BigImageSave, h_div_80,h_div_80,0,h_div_80);
 
+        // Welcome box RESIZING <-----
+        welcome_CL_Main.getLayoutParams().height = h_div_12_5;
+        Utility.setMargins(welcome_CL_Main, h_div_160,h_div_160,h_div_160,0);
+        welcome_TV_Text.setTextSize(TypedValue.COMPLEX_UNIT_PX, h_div_44_44);
+
+        welcome_TV_Text.setPadding(h_div_160,0,h_div_160,0);
+
+        cs.clone(welcome_CL_Main);
+        cs.connect(R.id.welcome_IB_Close, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, h_div_160);
+        cs.connect(R.id.welcome_IB_Close, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, h_div_160);
+        cs.connect(R.id.welcome_IB_Close, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, h_div_160);
+        cs.applyTo(welcome_CL_Main);
+
+        GradientDrawable gdWelcomeBoxBack = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xFF4EB0E9,0xFF46A7DF});
+        gdWelcomeBoxBack.setShape(GradientDrawable.RECTANGLE);
+        gdWelcomeBoxBack.setCornerRadius(h_div_160);
+        gdWelcomeBoxBack.setStroke(h_div_320, ContextCompat.getColor(this, R.color.gui_gray_dark));
+        welcome_CL_Main.setBackground(gdWelcomeBoxBack);
+
+
         // Resizing ----- [  КРАЙ  ]
 
         // Firebase
@@ -933,6 +963,16 @@ public class AppActivity extends AppCompatActivity {
                 app_CL_BigImage.setVisibility(View.INVISIBLE);
             }
         });
+        // Welcome box OnClickListener
+        View.OnClickListener welcomeBoxClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                welcome_CL_Main.setVisibility(View.INVISIBLE);
+                app_CL_SearchHeader.performClick();
+            }
+        };
+        welcome_CL_Main.setOnClickListener(welcomeBoxClick);
+        welcome_IB_Close.setOnClickListener(welcomeBoxClick);
 
         // Text Watchers
         app_ET_PrivChat_TextBox.addTextChangedListener(new TextWatcher() {
@@ -1928,12 +1968,7 @@ public class AppActivity extends AppCompatActivity {
                             db.removeFriend(user.getUid(), friendUID);
                         }
                     }
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // показване на съобщение на потребителя къде може да потърси своите приятели, понеже очевидно няма никакви <--------------------------------------------------------------||||||||
+                    welcome_CL_Main.setVisibility(View.VISIBLE); // помощ за потребителя къде да търси приятели
                 }
 
                 loadFriendList();
