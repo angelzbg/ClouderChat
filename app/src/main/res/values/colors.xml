@@ -5,6 +5,7 @@
     <color name="colorAccent">#858888</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="white90transp">#E6FFFFFF</color>
     <color name="black">#000000</color>
     <color name="black_transparent1">#C3000000</color>
     <color name="violet_hex1">#745EFF</color>

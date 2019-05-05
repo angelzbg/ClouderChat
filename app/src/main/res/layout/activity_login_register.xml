@@ -533,7 +533,8 @@
             android:id="@+id/logreg_CL_InfoWrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/white90transp"
+            android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -566,6 +567,7 @@
             android:background="@color/transparent"
             android:scaleType="fitXY"
             android:tint="@color/blue_hex1"
+            android:elevation="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/logreg_CL_InfoWrap"
             app:layout_constraintEnd_toEndOf="@+id/logreg_CL_InfoWrap"
             app:srcCompat="@drawable/droplets" />

@@ -286,12 +286,20 @@ public class LoginRegisterActivity extends AppCompatActivity {
         animationLoading = (AnimationDrawable) findViewById(R.id.logreg_IV_Loading).getBackground();
 
         //Info Layout
-        GradientDrawable gdInfoBoxBack = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xFFFFFFFF,0xFFFCFCFC});
+        GradientDrawable gdInfoBoxBack = new GradientDrawable();
+        gdInfoBoxBack.setColor(ContextCompat.getColor(this, R.color.white));
         gdInfoBoxBack.setShape(GradientDrawable.RECTANGLE);
         gdInfoBoxBack.setCornerRadius(height/10);
         gdInfoBoxBack.setStroke(height/800, ContextCompat.getColor(this, R.color.gui_text_whitish));
+        gdInfoBoxBack.setAlpha(229); // 90%
         findViewById(R.id.logreg_CL_InfoWrap).setBackground(gdInfoBoxBack);
         findViewById(R.id.logreg_IB_InfoClose).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideInfo();
+            }
+        });
+        findViewById(R.id.logreg_CL_InfoWrap).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideInfo();
