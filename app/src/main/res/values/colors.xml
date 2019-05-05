@@ -29,4 +29,5 @@
     <color name="gui_friends_back">#2C2C2E</color>
     <color name="gui_online_color">#42f46b</color>
     <color name="gui_gray_mid_80transp">#CB232324</color>
+    <color name="gui_gray_mid_50transp">#80232324</color>
 </resources>

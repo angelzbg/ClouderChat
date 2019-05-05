@@ -11,6 +11,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.os.Build;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
@@ -189,5 +193,46 @@ public class Utility {
 
         return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true);
     }//end of resizeBitmapTo1024pxMax()
+
+    public static Bitmap createBlurBitmapFromScreen(View mainView, Context applicationContext, int width, int height) {
+
+        int dstWidth = 480, dstHeight = 480;
+        if(width < height) {
+            double scale = (height*1.00)/(width*1.00);
+            dstHeight = (int)(dstWidth*scale);
+        } else if(width > height) {
+            double scale = (width*1.00)/(height*1.00);
+            dstHeight = (int)(dstWidth/scale);
+        } /*else { //равни са
+            dstHeight = 480;
+        }*/
+
+        Bitmap bitmap = null;
+        mainView.setDrawingCacheEnabled(true);
+        bitmap = Bitmap.createBitmap(mainView.getDrawingCache());
+        mainView.setDrawingCacheEnabled(false);
+        bitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight, false);
+
+        Bitmap result = null;
+        try {
+            RenderScript rsScript = RenderScript.create(applicationContext);
+            Allocation alloc = Allocation.createFromBitmap(rsScript, bitmap);
+
+            ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rsScript, Element.U8_4(rsScript));
+            blur.setRadius(21);
+            blur.setInput(alloc);
+
+            result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            Allocation outAlloc = Allocation.createFromBitmap(rsScript, result);
+
+            blur.forEach(outAlloc);
+            outAlloc.copyTo(result);
+
+            rsScript.destroy();
+        } catch (Exception e) {
+            return bitmap;
+        }
+        return result;
+    }//end of createBlurBitmapFromScreen()
 
 }

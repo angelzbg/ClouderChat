@@ -10,7 +10,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Shader;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -27,6 +31,8 @@ import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,6 +63,8 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.RunnableScheduledFuture;
 
 import angelzani.clouderchat.UI.LockableScrollView;
 import angelzani.clouderchat.UI.OnSwipeTouchListener;
@@ -75,6 +83,9 @@ public class LoginRegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
+
+    //Loading animation
+    private AnimationDrawable animationLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,6 +225,18 @@ public class LoginRegisterActivity extends AppCompatActivity {
             cs.connect(R.id.auth_IV_Google2, ConstraintSet.BOTTOM, R.id.auth_IV_Facebook2, ConstraintSet.BOTTOM, (int) (height/17.777));
             cs.applyTo((ConstraintLayout) findViewById(R.id.auth_CL));
 
+            //Loading Layout
+            findViewById(R.id.logreg_IV_Loading).getLayoutParams().width = width;
+            findViewById(R.id.logreg_IV_Loading).getLayoutParams().height = width;
+
+            //Info Layout
+            findViewById(R.id.logreg_IB_InfoClose).getLayoutParams().width = height/20;
+            findViewById(R.id.logreg_IB_InfoClose).getLayoutParams().height = height/20;
+            ((TextView)findViewById(R.id.logreg_TV_Info)).setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (height/44.44));
+
+            findViewById(R.id.logreg_CL_Info).setPadding(height/40, height/40, height/40, height/40);
+            findViewById(R.id.logreg_TV_Info).setPadding(height/20, height/20, height/20, height/20);
+
         }
         // ---------------------------------------- RESIZING THE DESIGN [  END  ] ----------------------------------------
 
@@ -225,7 +248,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
         logreg_LL_Main.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeTop() {
                 //Toast.makeText(MyActivity.this, "top", Toast.LENGTH_SHORT).show();
-                scrollDown();;
+                scrollDown();
             }
             public void onSwipeRight() {
                 //Toast.makeText(MyActivity.this, "right", Toast.LENGTH_SHORT).show();
@@ -258,6 +281,22 @@ public class LoginRegisterActivity extends AppCompatActivity {
         findViewById(R.id.register_IV_Avatar).setOnClickListener(goForAvatar);
 
         findViewById(R.id.register_IB_X).setOnClickListener(removeAvatar);
+
+        //Animations
+        animationLoading = (AnimationDrawable) findViewById(R.id.logreg_IV_Loading).getBackground();
+
+        //Info Layout
+        GradientDrawable gdInfoBoxBack = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xFFFFFFFF,0xFFFCFCFC});
+        gdInfoBoxBack.setShape(GradientDrawable.RECTANGLE);
+        gdInfoBoxBack.setCornerRadius(height/10);
+        gdInfoBoxBack.setStroke(height/800, ContextCompat.getColor(this, R.color.gui_text_whitish));
+        findViewById(R.id.logreg_CL_InfoWrap).setBackground(gdInfoBoxBack);
+        findViewById(R.id.logreg_IB_InfoClose).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideInfo();
+            }
+        });
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -314,20 +353,26 @@ public class LoginRegisterActivity extends AppCompatActivity {
     private View.OnClickListener loginClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            showLoading();
             login(((EditText)findViewById(R.id.login_ET_Email)).getText().toString().toLowerCase().trim(), ((EditText)findViewById(R.id.login_ET_Password)).getText().toString().trim());
         }
     };
     private void login(final String email, final String password) {
         if(email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginRegisterActivity.this, "All fields must be filled.", Toast.LENGTH_LONG).show();
+            hideLoading();
+            showInfo("All fields must be filled.");
+            //Toast.makeText(LoginRegisterActivity.this, "All fields must be filled.", Toast.LENGTH_LONG).show();
         }
         else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(LoginRegisterActivity.this, "Email address is invalid.", Toast.LENGTH_LONG).show();
+            hideLoading();
+            showInfo("Email address is invalid.");
+            //Toast.makeText(LoginRegisterActivity.this, "Email address is invalid.", Toast.LENGTH_LONG).show();
         }
         else {
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    hideLoading();
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         //FirebaseUser user = mAuth.getCurrentUser();
@@ -337,7 +382,8 @@ public class LoginRegisterActivity extends AppCompatActivity {
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Toast.makeText(LoginRegisterActivity.this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        showInfo("Login failed: " + task.getException().getMessage());
+                        //Toast.makeText(LoginRegisterActivity.this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -346,6 +392,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
     private View.OnClickListener registerClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            showLoading();
             disableRegisterButton();
             register(((EditText) findViewById(R.id.register_ET_Username)).getText().toString().trim(),
                     ((EditText) findViewById(R.id.register_ET_Email)).getText().toString().toLowerCase().trim(),
@@ -355,29 +402,41 @@ public class LoginRegisterActivity extends AppCompatActivity {
     };
     private void register(final String username, final String email, final String password, final String confirm) {
         if(username.isEmpty() || email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
-            Toast.makeText(LoginRegisterActivity.this, "All fields must be filled.", Toast.LENGTH_LONG).show();
+            hideLoading();
             enableRegisterButton();
+            showInfo("All fields must be filled.");
+            //Toast.makeText(LoginRegisterActivity.this, "All fields must be filled.", Toast.LENGTH_LONG).show();
         }
         else if(username.length() < 2 || username.length() > 16) {
-            Toast.makeText(LoginRegisterActivity.this, "Username must contain from 2 to 16 characters.", Toast.LENGTH_LONG).show();
+            hideLoading();
             enableRegisterButton();
+            showInfo("Username must contain from 2 to 16 characters.");
+            //Toast.makeText(LoginRegisterActivity.this, "Username must contain from 2 to 16 characters.", Toast.LENGTH_LONG).show();
         }
         else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(LoginRegisterActivity.this, "Email address is invalid.", Toast.LENGTH_LONG).show();
+            hideLoading();
             enableRegisterButton();
+            showInfo("Email address is invalid.");
+            //Toast.makeText(LoginRegisterActivity.this, "Email address is invalid.", Toast.LENGTH_LONG).show();
         }
         else if(password.length() < 6) {
-            Toast.makeText(LoginRegisterActivity.this, "Password cant contain less than 6 characters.", Toast.LENGTH_LONG).show();
+            hideLoading();
             enableRegisterButton();
+            showInfo("Password cant contain less than 6 characters.");
+            //Toast.makeText(LoginRegisterActivity.this, "Password cant contain less than 6 characters.", Toast.LENGTH_LONG).show();
         }
         else if(!password.equals(confirm)) {
-            Toast.makeText(LoginRegisterActivity.this, "Passwords don't match.", Toast.LENGTH_LONG).show();
+            hideLoading();
             enableRegisterButton();
+            showInfo("Passwords don't match.");
+            //Toast.makeText(LoginRegisterActivity.this, "Passwords don't match.", Toast.LENGTH_LONG).show();
         }
         else {
             if(!isInternetAvailable()) {
-                Toast.makeText(LoginRegisterActivity.this, "No internet connection.", Toast.LENGTH_LONG).show();
+                hideLoading();
                 enableRegisterButton();
+                showInfo("No internet connection.");
+                //Toast.makeText(LoginRegisterActivity.this, "No internet connection.", Toast.LENGTH_LONG).show();
             }
             else {
                 DatabaseReference dbRef1 = dbRef.child("nicknames").child(username.toLowerCase());
@@ -386,8 +445,10 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()) {
-                            Toast.makeText(LoginRegisterActivity.this, "This Username is already taken.", Toast.LENGTH_LONG).show();
+                            hideLoading();
                             enableRegisterButton();
+                            showInfo("This Username is already taken.");
+                            //Toast.makeText(LoginRegisterActivity.this, "This Username is already taken.", Toast.LENGTH_LONG).show();
                         }
                         else {
                             registerFinalize(username, email, password);
@@ -395,8 +456,10 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(LoginRegisterActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        hideLoading();
                         enableRegisterButton();
+                        showInfo("Error: " + databaseError.getMessage());
+                        //Toast.makeText(LoginRegisterActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -473,7 +536,9 @@ public class LoginRegisterActivity extends AppCompatActivity {
                                                         });
                                                     } else {
                                                         // Handle failures
-                                                        Toast.makeText(LoginRegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                        hideLoading();
+                                                        showInfo("Error: " + task.getException().getMessage());
+                                                        //Toast.makeText(LoginRegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                                     }
                                                 }
                                             });
@@ -493,14 +558,16 @@ public class LoginRegisterActivity extends AppCompatActivity {
                 } else {
                     // If sign in fails, display a message to the user.
                     //Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    Toast.makeText(LoginRegisterActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    hideLoading();
                     enableRegisterButton();
+                    showInfo("Authentication failed: " + task.getException().getMessage());
+                    //Toast.makeText(LoginRegisterActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
     private void goToMainFromRegSuccessOrFail() {
-        Toast.makeText(LoginRegisterActivity.this, "Welcome to Clouder Chat.", Toast.LENGTH_LONG).show();
+        hideLoading();
         Intent intent = new Intent(LoginRegisterActivity.this, AppActivity.class);
         startActivity(intent);
         finish();
@@ -610,6 +677,55 @@ public class LoginRegisterActivity extends AppCompatActivity {
         findViewById(R.id.auth_IV_Google2).setVisibility(vis2);
         findViewById(R.id.auth_IV_Facebook2).setVisibility(vis2);
         findViewById(R.id.auth_IV_Twitter2).setVisibility(vis2);
+    }
+    //Loading anim
+    private void showLoading(){
+        animationLoading.setOneShot(false);
+        animationLoading.start();
+        findViewById(R.id.logreg_CL_Loading).setVisibility(View.VISIBLE);
+    }
+    private void hideLoading(){
+        animationLoading.stop();
+        findViewById(R.id.logreg_CL_Loading).setVisibility(View.INVISIBLE);
+    }
+    //Info Box
+    private void showInfo(String stringInfo){
+        ((TextView)findViewById(R.id.logreg_TV_Info)).setText(stringInfo);
+        findViewById(R.id.logreg_CL_Info).setBackground(new BitmapDrawable(getResources(), Utility.createBlurBitmapFromScreen(findViewById(R.id.logreg_CL_Main), getApplicationContext(), width, height)));
+        findViewById(R.id.logreg_IB_InfoClose).setVisibility(View.INVISIBLE);
+        findViewById(R.id.logreg_CL_Info).setVisibility(View.VISIBLE);
+        final Animation expandOutSlow = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_out_slow);
+        findViewById(R.id.logreg_CL_InfoWrap).startAnimation(expandOutSlow);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Animation dropToNormal = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.drop_to_normal);
+                findViewById(R.id.logreg_IB_InfoClose).setVisibility(View.VISIBLE);
+                findViewById(R.id.logreg_IB_InfoClose).startAnimation(dropToNormal);
+            }
+        }, 125);
+    }
+    private void hideInfo(){
+        final Animation dropToBottom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.drop_to_bottom);
+        findViewById(R.id.logreg_IB_InfoClose).setVisibility(View.VISIBLE);
+        findViewById(R.id.logreg_IB_InfoClose).startAnimation(dropToBottom);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Animation shrink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shrink);
+                findViewById(R.id.logreg_CL_InfoWrap).startAnimation(shrink);
+            }
+        }, 125);
+
+        final Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.logreg_CL_Info).setVisibility(View.INVISIBLE);
+            }
+        }, 249);
     }
     /* -------------------- DESIGN [  END  ] -------------------- */
 
