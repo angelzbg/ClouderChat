@@ -1,0 +1,113 @@
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+// Create and Deploy Your First Cloud Functions
+// https://firebase.google.com/docs/functions/write-firebase-functions
+
+exports.afterRegFunction = functions.auth.user().onCreate((user) => {
+    const date = Date.now();
+	var userObject = {
+		nick : user.uid, // user nickname
+        nickCh : 0, // next date to change nick
+        avatar: "default", // default or url for firebase storage
+        avatarCh: 0, // date when avatar was changed
+        dateCr : date, // date the account was created
+        points : 0, // user points
+        online : true // user presence
+    };
+    const p1 = admin.database().ref('userInfo/' + user.uid).set(userObject);
+    const p2 = admin.database().ref('nicknames/' + user.uid.toString().toLowerCase()).set(user.uid);
+    return Promise.all([p1, p2]);
+});
+
+exports.dbUpdateOnNicknameChange = functions.database.ref('/userInfo/{uid}/nick').onUpdate((change, event) => {
+    const uid = event.params.uid;
+    const nextDate4Change = Date.now() + 15552000000; //6 months
+    console.log('User ' + uid + ' is changing nickname from ' + change.before.val() + ' to ' + change.after.val());
+    const promise1 = admin.database().ref('nicknames/' + change.before.val().toLowerCase()).remove();
+    const promise2 = admin.database().ref('nicknames/' + change.after.val().toLowerCase()).set(uid);
+    const promise3 = admin.database().ref('userInfo/' + uid + "/nickCh").set(nextDate4Change);
+    return Promise.all([promise1, promise2, promise3]);
+});
+
+exports.dbUpdateOnAvatarChange = functions.database.ref('/userInfo/{uid}/avatar').onUpdate((change, event) => {
+    const uid = event.params.uid;
+    console.log('User ' + uid + ' has changed his avatar');
+    const promise1 = admin.database().ref('userInfo/' + uid + "/avatarCh").set(Date.now());
+    return Promise.all([promise1]);
+});
+
+/*exports.dbWriteOnFriendRequest = functions.database.ref('/friendRequest/{receiverid}/{senderid}/message').onWrite((change, context) => { // доста излишна функция -> bye bye
+    // Не искаме да записваме дата когато се трие
+    if (!change.after.exists()) {
+        return null;
+    }
+    //const writtenContent = change.after.val(); // въщност не ни интересува съобщението
+    const receiverid = context.params.receiverid;
+    const senderid = context.params.senderid;
+
+    const promise1 = admin.database().ref('/friendRequest/' + receiverid + '/' + senderid + '/date').set(Date.now());
+    return Promise.all([promise1]);
+});*/
+
+exports.dbWriteOnFriendRequestChoice = functions.database.ref('/friendRequest/{receiverid}/{senderid}/accepted').onWrite((change, context) => {
+    // Не искаме да записваме дата когато се трие
+    if (!change.after.exists()) {
+        return null;
+    }
+    const writtenContent = change.after.val(); // true || false
+    const receiverid = context.params.receiverid;
+    const senderid = context.params.senderid;
+
+    if(writtenContent) {
+        const promiseAccepted1 = admin.database().ref('/friendList/' + senderid + '/' + receiverid).set(true);
+    const promiseAccepted2 = admin.database().ref('/friendList/' + receiverid + '/' + senderid).set(true);
+    const promiseRefused = admin.database().ref('/friendRequest/' + receiverid + '/' + senderid).remove();
+        return Promise.all([promiseAccepted1, promiseAccepted2, promiseRefused]);
+    } else {
+        const promiseRefused = admin.database().ref('/friendRequest/' + receiverid + '/' + senderid).remove();
+        return Promise.all([promiseRefused]);
+    }
+});
+
+exports.dbWriteOnBlock = functions.database.ref('/blockList/{useruid}/{blockuid}').onWrite((change, context) => {
+    // Не искаме да правим нищо когато се трие
+    if (!change.after.exists()) {
+        return null;
+    }
+    //const writtenContent = change.after.val(); // true || false -> потребителят може да пише само true или да трие вече съществуващата data
+    const useruid = context.params.useruid;
+    const blockuid = context.params.blockuid;
+
+    const promiseFriendList1 = admin.database().ref('/friendList/' + useruid + '/' + blockuid).remove();
+    const promiseFriendList2 = admin.database().ref('/friendList/' + blockuid + '/' + useruid).remove();
+    return Promise.all([promiseFriendList1, promiseFriendList2]);
+    // Всъщност блокирането не е двустранно -> съответно просто ще се добавят правила, с които потребителят сам да може да трие от блок листа си, ние обратботваме само нови блокирания
+    /*const promiseUnblock = admin.database().ref('/blockList/' + useruid + '/' + blockuid).remove();
+
+    if(writtenContent) {
+        return Promise.all([promiseFriendList1, promiseFriendList2]);
+    } else {
+        return Promise.all([promiseUnblock]);
+    }*/
+});
+
+exports.dbWriteOnUnfriend = functions.database.ref('/friendList/{useruid}/{frienduid}').onWrite((change, context) => {
+    // Не искаме да записваме дата когато се трие
+    if (!change.after.exists()) {
+        return null;
+    }
+    // Когато потребителят запише false премахваме потребителя от приятели
+    const writtenContent = change.after.val(); // true || false
+    const useruid = context.params.useruid;
+    const frienduid = context.params.frienduid;
+
+    if(!writtenContent) {
+        const promiseReove1 = admin.database().ref('/friendList/' + useruid + '/' + frienduid).remove();
+        const promiseReove2 = admin.database().ref('/friendList/' + frienduid + '/' + useruid).remove();
+        return Promise.all([promiseReove1, promiseReove2]);
+    } else {
+        return null;
+    }
+});

@@ -1,0 +1,138 @@
+{
+  "rules": {
+    
+    "userInfo": {
+      "$uid": {
+        ".read": "$uid === auth.uid", // всеки потребител може да чете цялата си информация.
+        "nick" : {
+          ".read" : true,
+          ".write" : "$uid === auth.uid && root.child('userInfo').child(auth.uid).child('nickCh').val() <= now",
+          ".validate" : "newData.isString() && newData.val().length>1 && newData.val().length < 17 && newData.val().matches(/^[a-zA-Z0-9_]+$/) && !root.child('nicknames').child(newData.val().toLowerCase()).exists()"
+        },
+        "nickCh" : {
+          ".read" : "$uid === auth.uid"
+        },
+        "avatar" : {
+          ".read" : true,
+          ".write" : "$uid === auth.uid",
+        },
+        "avatarCh" : {
+          ".read": true,
+        },
+        "dateCr" : {
+          ".read" : true
+        },
+        "points" : {
+          ".read" : true
+        },
+        "online" : {
+          ".read" : "root.child('friendList').child($uid).child(auth.uid).exists() || root.child('friendList').child(auth.uid).child($uid).exists() || $uid === auth.uid",
+          ".write" : "$uid === auth.uid",
+          ".validate" : "newData.val() == true || newData.val() == false"
+        }
+      }
+    },
+    
+    "friendList": {
+      "$uid":{
+        ".read" : "$uid === auth.uid", // само потребителя има право да си гледа френдлиста
+        // писането става само от тригър при приемане на покана или блокиране + само премахване от потребителя
+        "$friendUID": {
+          ".write": "$uid === auth.uid && data.exists() && newData.val() == false"
+        }
+      }
+    },
+    
+    "friendRequest": {
+      "$uid": {
+        ".read" : "$uid === auth.uid",
+        "$senderUID": {
+          ".write" : "$senderUID === auth.uid && $senderUID != $uid && !data.exists() && root.child('userInfo').child($uid).exists() && !root.child('blockList').child($uid).child($senderUID).exists() && !root.child('blockList').child($senderUID).child($uid).exists() && !root.child('friendList').child($uid).child($senderUID).exists() && !root.child('friendList').child($senderUID).child($uid).exists() && !root.child('friendRequest').child($senderUID).child($uid).exists()",
+          ".validate": "newData.hasChildren(['message', 'date'])",
+          "message": {
+            ".validate": "newData.isString() && newData.val().length < 51 && newData.val().length > 0"
+          },
+          "date": {
+            ".validate": "newData.val() == now" // ServerValue.TIMESTAMP
+          },
+          "accepted": {
+            ".write" : "$uid === auth.uid && $uid != $senderUID && (newData.val() == true || newData.val() == false) && !data.exists() && root.child('friendRequest').child($uid).child($senderUID).exists()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        
+        }
+      }
+    },
+      
+    "blockList":{
+      "$uid":{
+        ".read": "$uid === auth.uid",
+        "$blockUID": {
+          ".write" : "$uid === auth.uid && $uid != $blockUID && ((!data.exists() && newData.val() == true) || (data.exists() && !newData.exists())) && root.child('userInfo').child($blockUID).exists()"
+        }
+      }
+    },
+      
+    "nicknames": {
+      ".read" : true
+    },
+     
+    "privateChats": {
+      "$targetUID": {
+        ".read" : "$targetUID === auth.uid",
+        "$messageID": {
+        // Искаме да пишат само логнати потребители без право на редактиране само на хора, които ги имат в приятели или да трият когато са получатели
+        // Веднъж прочетено съобщение не ни трябва в датабазата, въпреки че обмисляме ползване през няколко устройствa, няма да си пълним датабазата с глупости -> няма синхронизация на съобщенията, само на другата информация
+        	".write" : "( !data.exists() && root.child('friendList').child($targetUID).child(auth.uid).exists() ) || ( auth.uid === $targetUID && !newData.exists() )",
+        	".validate": "newData.hasChildren(['sender', 'message', 'type', 'date'])",
+        	"sender": {
+          	".validate" : "newData.val() === auth.uid"
+        	},
+        	"date": {
+          	".validate" : "newData.val() == now" // ServerValue.TIMESTAMP
+        	},
+        	"type": { // 1 = text message; 2 = image base64 string
+          	".validate" : "newData.val() == 1 || newData.val() == 2"
+        	},
+        	"message": {
+          	".validate" : "newData.isString()" // няма да се валидира дали ако е тайп 2 всъщност е base64 img string, понеже и без това ще минава голям трафик от тези съобщения, безсмислено е
+        	},
+        	"$other": {
+          	".validate": false
+        	}
+      	}
+      }
+    },
+      
+    "categories": {
+      ".read" : true
+    },
+    
+    "posts": {
+      ".read" : true
+    },
+    
+    "votesPosts": {
+      ".read" : true
+    },
+      
+    "commentsPosts": {
+      ".read" : true
+    },
+      
+    "votesCommentsPosts": {
+      ".read" : true
+    },
+      
+    "commentsAnswers": {
+      ".read" : true
+    },
+      
+    "votesCommentsAnswers": {
+      ".read" : true
+    },
+      
+  }
+}

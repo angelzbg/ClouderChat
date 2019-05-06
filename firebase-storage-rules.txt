@@ -1,0 +1,12 @@
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /avatars/{userId} {
+      allow read;
+      allow write: if (request.auth.uid + ".jpg") == userId && request.resource.size < 1 * 200 * 1024 && userId.matches(".*\\.jpg");
+    }
+    match /posts/{userId}/{postIdPicture} {
+    	allow read;
+      allow write: if request.auth.uid == userId && request.resource.size < 5 * 1024 * 1024 && postIdPicture.matches(".*\\.jpg");
+    }
+  }
+}

@@ -252,16 +252,16 @@ public class AppActivity extends AppCompatActivity {
 
                                 ConstraintSet cs = new ConstraintSet();
                                 cs.clone(layoutPrivChat);
-                                cs.connect(IV_Avatar.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, layout_margin_start_end/2);
-                                cs.connect(IV_Avatar.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, layout_margin_start_end/2);
-                                cs.connect(IV_Avatar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, layout_margin_start_end/2);
-                                cs.connect(TV_Nick.getId(), ConstraintSet.START, IV_Avatar.getId(), ConstraintSet.END, layout_margin_start_end/2);
+                                cs.connect(IV_Avatar.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, layout_margin_start_end / 2);
+                                cs.connect(IV_Avatar.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, layout_margin_start_end / 2);
+                                cs.connect(IV_Avatar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, layout_margin_start_end / 2);
+                                cs.connect(TV_Nick.getId(), ConstraintSet.START, IV_Avatar.getId(), ConstraintSet.END, layout_margin_start_end / 2);
                                 cs.connect(TV_Nick.getId(), ConstraintSet.TOP, IV_Avatar.getId(), ConstraintSet.TOP);
-                                cs.connect(TV_Date.getId(), ConstraintSet.TOP, TV_Nick.getId(), ConstraintSet.TOP);
-                                cs.connect(TV_Date.getId(), ConstraintSet.START, TV_Nick.getId(), ConstraintSet.END, layout_margin_start_end/4);
+                                cs.connect(TV_Date.getId(), ConstraintSet.TOP, TV_Message.getId(), ConstraintSet.TOP);
+                                cs.connect(TV_Date.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, layout_margin_start_end / 2);
                                 cs.connect(TV_Message.getId(), ConstraintSet.TOP, TV_Nick.getId(), ConstraintSet.BOTTOM);
                                 cs.connect(TV_Message.getId(), ConstraintSet.START, TV_Nick.getId(), ConstraintSet.START);
-                                cs.connect(TV_Message.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, layout_margin_start_end/2);
+                                cs.connect(TV_Message.getId(), ConstraintSet.END, TV_Date.getId(), ConstraintSet.START, layout_margin_start_end / 2);
                                 cs.applyTo(layoutPrivChat);
 
                                 layoutPrivChat.setBackground(gdChatsBackRead);
@@ -1505,17 +1505,16 @@ public class AppActivity extends AppCompatActivity {
 
                             ConstraintSet cs = new ConstraintSet();
                             cs.clone(layoutPrivChat);
-                            cs.clone(layoutPrivChat);
-                            cs.connect(IV_Avatar.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, layout_margin_start_end/2);
-                            cs.connect(IV_Avatar.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, layout_margin_start_end/2);
-                            cs.connect(IV_Avatar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, layout_margin_start_end/2);
-                            cs.connect(TV_Nick.getId(), ConstraintSet.START, IV_Avatar.getId(), ConstraintSet.END, layout_margin_start_end/2);
+                            cs.connect(IV_Avatar.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, layout_margin_start_end / 2);
+                            cs.connect(IV_Avatar.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, layout_margin_start_end / 2);
+                            cs.connect(IV_Avatar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, layout_margin_start_end / 2);
+                            cs.connect(TV_Nick.getId(), ConstraintSet.START, IV_Avatar.getId(), ConstraintSet.END, layout_margin_start_end / 2);
                             cs.connect(TV_Nick.getId(), ConstraintSet.TOP, IV_Avatar.getId(), ConstraintSet.TOP);
-                            cs.connect(TV_Date.getId(), ConstraintSet.TOP, TV_Nick.getId(), ConstraintSet.TOP);
-                            cs.connect(TV_Date.getId(), ConstraintSet.START, TV_Nick.getId(), ConstraintSet.END, layout_margin_start_end/4);
+                            cs.connect(TV_Date.getId(), ConstraintSet.TOP, TV_Message.getId(), ConstraintSet.TOP);
+                            cs.connect(TV_Date.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, layout_margin_start_end / 2);
                             cs.connect(TV_Message.getId(), ConstraintSet.TOP, TV_Nick.getId(), ConstraintSet.BOTTOM);
                             cs.connect(TV_Message.getId(), ConstraintSet.START, TV_Nick.getId(), ConstraintSet.START);
-                            cs.connect(TV_Message.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, layout_margin_start_end/2);
+                            cs.connect(TV_Message.getId(), ConstraintSet.END, TV_Date.getId(), ConstraintSet.START, layout_margin_start_end / 2);
                             cs.applyTo(layoutPrivChat);
 
                             layoutPrivChat.setBackground(gdChatsBackRead);
@@ -1529,7 +1528,7 @@ public class AppActivity extends AppCompatActivity {
                             });
                         }
 
-                        if (app_LL_PrivChatBody.getChildCount() == 1) { // искаме да вземем датата най-старото съобщение в чата, в случай, че потребителят до сега не си е писал с този човек ще се прецака много жестоко цялата система и ще тегли едни и същи съобщения -> за това се подсигуряваме
+                        if (app_LL_PrivChatBody.getChildCount() == 1) { // искаме да вземем датата на най-старото съобщение в чата, в случай, че потребителят до сега не си е писал с този човек ще се прецака много жестоко цялата система и ще тегли едни и същи съобщения -> за това се подсигуряваме
                             private_chat_oldest_date_loaded = messageToSave.getDate();
                         }
                     }
