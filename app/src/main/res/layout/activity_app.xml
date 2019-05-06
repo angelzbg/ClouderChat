@@ -943,4 +943,91 @@
             app:srcCompat="@drawable/icon_arrow_right" />
     </android.support.constraint.ConstraintLayout>
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_Loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gui_gray_mid_50transp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible"
+        android:elevation="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/app_IV_Loading"
+            android:layout_width="480px"
+            android:layout_height="480px"
+            android:background="@drawable/loading_animation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_CL_Info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="20px"
+        android:paddingTop="20px"
+        android:paddingEnd="20px"
+        android:paddingBottom="20px"
+        android:visibility="invisible"
+        android:elevation="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/app_CL_InfoWrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white90transp"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/app_TV_Info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingStart="40px"
+                android:paddingTop="40px"
+                android:paddingEnd="40px"
+                android:paddingBottom="40px"
+                android:text="Some Info"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="18px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <ImageButton
+            android:id="@+id/app_IB_InfoClose"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:background="@color/transparent"
+            android:elevation="5dp"
+            android:scaleType="fitXY"
+            android:tint="@color/blue_hex1"
+            app:layout_constraintBottom_toBottomOf="@+id/app_CL_InfoWrap"
+            app:layout_constraintEnd_toEndOf="@+id/app_CL_InfoWrap"
+            app:srcCompat="@drawable/droplets" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>

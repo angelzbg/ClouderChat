@@ -293,18 +293,14 @@ public class LoginRegisterActivity extends AppCompatActivity {
         gdInfoBoxBack.setStroke(height/800, ContextCompat.getColor(this, R.color.gui_text_whitish));
         gdInfoBoxBack.setAlpha(229); // 90%
         findViewById(R.id.logreg_CL_InfoWrap).setBackground(gdInfoBoxBack);
-        findViewById(R.id.logreg_IB_InfoClose).setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener closeInfoClicker = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideInfo();
             }
-        });
-        findViewById(R.id.logreg_CL_InfoWrap).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideInfo();
-            }
-        });
+        };
+        findViewById(R.id.logreg_IB_InfoClose).setOnClickListener(closeInfoClicker);
+        findViewById(R.id.logreg_CL_InfoWrap).setOnClickListener(closeInfoClicker);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();

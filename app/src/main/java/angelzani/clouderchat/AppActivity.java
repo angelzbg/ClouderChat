@@ -17,10 +17,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -93,6 +96,9 @@ import angelzani.clouderchat.UI.ZoomableImageView;
 import angelzani.clouderchat.Utility.StorageHelper;
 import angelzani.clouderchat.Utility.Utility;
 
+// TO DO:
+// HashMap вместо ArrayList където може без да губи функционалност
+
 public class AppActivity extends AppCompatActivity {
 
     @Override
@@ -156,7 +162,7 @@ public class AppActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if(databaseError!=null){
-                            Toast.makeText(getApplicationContext(), "You are not authorized to message this user.", Toast.LENGTH_LONG).show();
+                            showInfo("You are not authorized to message this user.");
                         } else {
                             final PrivChatModel messageToSave = new PrivChatModel(friendUID, messageToSend.getSender(), messageToSend.getMessage(), messageToSend.getType(), System.currentTimeMillis());
                             db.addMessage(messageToSave);
@@ -388,6 +394,9 @@ public class AppActivity extends AppCompatActivity {
     private ConstraintLayout welcome_CL_Main;
     private TextView welcome_TV_Text;
     private ImageButton welcome_IB_Close;
+
+    //Loading animation
+    private AnimationDrawable animationLoading;
 
     // Firebase
     private FirebaseAuth mAuth;
@@ -811,6 +820,19 @@ public class AppActivity extends AppCompatActivity {
         gdWelcomeBoxBack.setStroke(h_div_320, ContextCompat.getColor(this, R.color.gui_gray_dark));
         welcome_CL_Main.setBackground(gdWelcomeBoxBack);
 
+        //Loading Layout RESIZING <-----
+        findViewById(R.id.app_IV_Loading).getLayoutParams().width = width;
+        findViewById(R.id.app_IV_Loading).getLayoutParams().height = width;
+        animationLoading = (AnimationDrawable) findViewById(R.id.app_IV_Loading).getBackground();
+
+        //Info Layout RESIZING <-----
+        findViewById(R.id.app_IB_InfoClose).getLayoutParams().width = height/20;
+        findViewById(R.id.app_IB_InfoClose).getLayoutParams().height = height/20;
+        ((TextView)findViewById(R.id.app_TV_Info)).setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (height/44.44));
+
+        findViewById(R.id.app_CL_Info).setPadding(height/40, height/40, height/40, height/40);
+        findViewById(R.id.app_TV_Info).setPadding(height/20, height/20, height/20, height/20);
+
 
         // Resizing ----- [  КРАЙ  ]
 
@@ -822,6 +844,7 @@ public class AppActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
+        showLoading();
         UserModel localUser = db.getUser(user.getUid());
         if( localUser == null ) { // трябва да изтеглим информацията за юзъра и да я вкараме в локалната дб
             dbRef.child("userInfo").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -856,7 +879,7 @@ public class AppActivity extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(AppActivity.this, "Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+                                showInfo("Error: " + exception.getMessage());
                             }
                         });
                     } else {
@@ -866,7 +889,7 @@ public class AppActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(AppActivity.this, "DB Error: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    showInfo(databaseError.getMessage());
                 }
             });
         } else { //трябва просто да покажем и обновим
@@ -973,6 +996,26 @@ public class AppActivity extends AppCompatActivity {
         };
         welcome_CL_Main.setOnClickListener(welcomeBoxClick);
         welcome_IB_Close.setOnClickListener(welcomeBoxClick);
+
+        //Animations
+        animationLoading = (AnimationDrawable) findViewById(R.id.app_IV_Loading).getBackground();
+
+        //Info Layout
+        GradientDrawable gdInfoBoxBack = new GradientDrawable();
+        gdInfoBoxBack.setColor(ContextCompat.getColor(this, R.color.white));
+        gdInfoBoxBack.setShape(GradientDrawable.RECTANGLE);
+        gdInfoBoxBack.setCornerRadius(height/10);
+        gdInfoBoxBack.setStroke(height/800, ContextCompat.getColor(this, R.color.gui_text_whitish));
+        gdInfoBoxBack.setAlpha(229); // 90%
+        findViewById(R.id.app_CL_InfoWrap).setBackground(gdInfoBoxBack);
+        View.OnClickListener closeInfoClicker = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideInfo();
+            }
+        };
+        findViewById(R.id.app_IB_InfoClose).setOnClickListener(closeInfoClicker);
+        findViewById(R.id.app_CL_InfoWrap).setOnClickListener(closeInfoClicker);
 
         // Text Watchers
         app_ET_PrivChat_TextBox.addTextChangedListener(new TextWatcher() {
@@ -1267,6 +1310,7 @@ public class AppActivity extends AppCompatActivity {
     View.OnClickListener acceptPhoto = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            showLoading();
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference avatarImagesRef = storageRef.child("avatars/" + user.getUid() + ".jpg");
@@ -1280,7 +1324,8 @@ public class AppActivity extends AppCompatActivity {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Upload error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        hideLoading();
+                        showInfo("Upload error: " + task.getException().getMessage());
                         //throw task.getException();
                     }
                     // Continue with the task to get the download URL
@@ -1306,13 +1351,15 @@ public class AppActivity extends AppCompatActivity {
                                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                         self_IV_Accept.setVisibility(View.INVISIBLE);
                                         self_IV_Decline.setVisibility(View.INVISIBLE);
+                                        hideLoading();
                                     }
                                 });
                             }
                         });
                     } else {
                         // Handle failures
-                        Toast.makeText(AppActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        hideLoading();
+                        showInfo("Error: " + task.getException().getMessage());
                     }
                 }
             });
@@ -1368,7 +1415,7 @@ public class AppActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     if(databaseError!=null){
-                        Toast.makeText(getApplicationContext(), "You are not authorized to message this user.", Toast.LENGTH_LONG).show();
+                        showInfo("You are not authorized to message this user.");
                     } else {
                         final PrivChatModel messageToSave = new PrivChatModel(friendUID, messageToSend.getSender(), messageToSend.getMessage(), messageToSend.getType(), System.currentTimeMillis());
                         db.addMessage(messageToSave);
@@ -1496,6 +1543,7 @@ public class AppActivity extends AppCompatActivity {
     View.OnClickListener search = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            showLoading();
             final String searchString = search_ET_Search.getText().toString().toLowerCase().trim();
 
             if (!searchString.isEmpty()) {
@@ -1510,6 +1558,7 @@ public class AppActivity extends AppCompatActivity {
                 dbRef.child("nicknames").orderByKey().startAt(searchString).endAt(searchString + "\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot DATA) {
+                        hideLoading();
                         if (DATA.getChildrenCount() == 0 && search_LL_PeopleFriends.getChildCount() == 0) {
                             ((TextView) findViewById(R.id.search_TV_People)).setText("No people found");
                         } else {
@@ -1789,7 +1838,10 @@ public class AppActivity extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        hideLoading();
+                        showInfo(databaseError.getMessage());
+                    }
                 });
             }
         }
@@ -1982,6 +2034,8 @@ public class AppActivity extends AppCompatActivity {
     private OnlineFriendsCounter online_friends_counter = new OnlineFriendsCounter();
 
     private void loadFriendList() {
+
+        hideLoading();
 
         dbRef.child("friendList").child(user.getUid()).addChildEventListener(new ChildEventListener() { // следим за текущите и за добавяне в листа с приятели
             @Override
@@ -3308,12 +3362,12 @@ public class AppActivity extends AppCompatActivity {
 
                     if(isStoragePermissionGranted()) {
                         if(StorageHelper.isExternalStorageWritable()){
-                            String root = Environment.getExternalStorageDirectory().toString();
-                            File myDir = new File(root + "/ClouderChat");
-                            if (!myDir.exists()) {
-                                myDir.mkdir();
-                                //myDir.mkdirs();
-                            }
+                            File[] Dirs = ContextCompat.getExternalFilesDirs(getApplicationContext(), Environment.DIRECTORY_PICTURES);
+                            File myDir = new File(Dirs[1].getAbsolutePath(), "ClouderChat");
+                            //Toast.makeText(getApplicationContext(), myDir.toString(), Toast.LENGTH_LONG).show();
+                            //File myDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ClouderChat");
+
+                            if(!myDir.exists()) myDir.mkdirs();
                             String fname = date + "_" + senderUID + "_to_" + targetUID + ".jpg";
                             File file = new File(myDir.getAbsolutePath(), fname);
                             if (file.exists()) file.delete(); // не мисля, че ще се стигне до тук, но за всеки случай
@@ -3326,16 +3380,13 @@ public class AppActivity extends AppCompatActivity {
                                 StorageHelper.addImageТоGallery(file, getApplicationContext());
                             } catch (Exception e) {
                                 //Toast.makeText(getApplicationContext(), "Image couldn't be saved", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                showInfo(e.getMessage());
                                 //e.printStackTrace();
                             }
                         } else {
-                            /*String root = Environment.getDataDirectory().toString();
-                            File myDir = new File(root + "/ClouderChat");
-                            if (!myDir.exists()) {
-                                myDir.mkdir();
-                                //myDir.mkdirs();
-                            }
+                            String root = Environment.getExternalStorageDirectory().toString();
+                            File myDir = new File(root, "ClouderChat");
+                            if(!myDir.exists()) myDir.mkdirs();
                             String fname = date + "_" + senderUID + "_to_" + targetUID + ".jpg";
                             File file = new File(myDir.getAbsolutePath(), fname);
                             if (file.exists()) file.delete(); // не мисля, че ще се стигне до тук, но за всеки случай
@@ -3348,9 +3399,9 @@ public class AppActivity extends AppCompatActivity {
                                 StorageHelper.addImageТоGallery(file, getApplicationContext());
                             } catch (Exception e) {
                                 //Toast.makeText(getApplicationContext(), "Image couldn't be saved", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                showInfo(e.getMessage());
                                 //e.printStackTrace();
-                            }*/
+                            }
                         }
                     }
 
@@ -3513,6 +3564,56 @@ public class AppActivity extends AppCompatActivity {
             //Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
             //resume tasks needing this permission
         }
+    }
+
+    //Loading anim
+    private void showLoading(){
+        animationLoading.setOneShot(false);
+        animationLoading.start();
+        findViewById(R.id.app_CL_Loading).setVisibility(View.VISIBLE);
+    }
+    private void hideLoading(){
+        animationLoading.stop();
+        findViewById(R.id.app_CL_Loading).setVisibility(View.INVISIBLE);
+    }
+    //Info Box
+    private void showInfo(String stringInfo){
+        ((TextView)findViewById(R.id.app_TV_Info)).setText(stringInfo);
+        findViewById(R.id.app_CL_Info).setBackground(new BitmapDrawable(getResources(), Utility.createBlurBitmapFromScreen(findViewById(R.id.app_CL_Main), getApplicationContext(), width, height)));
+        findViewById(R.id.app_IB_InfoClose).setVisibility(View.INVISIBLE);
+        findViewById(R.id.app_CL_Info).setVisibility(View.VISIBLE);
+        final Animation expandOutSlow = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.expand_out_slow);
+        findViewById(R.id.app_CL_InfoWrap).startAnimation(expandOutSlow);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Animation dropToNormal = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.drop_to_normal);
+                findViewById(R.id.app_IB_InfoClose).setVisibility(View.VISIBLE);
+                findViewById(R.id.app_IB_InfoClose).startAnimation(dropToNormal);
+            }
+        }, 125);
+    }
+    private void hideInfo(){
+        final Animation dropToBottom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.drop_to_bottom);
+        findViewById(R.id.app_IB_InfoClose).setVisibility(View.VISIBLE);
+        findViewById(R.id.app_IB_InfoClose).startAnimation(dropToBottom);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Animation shrink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shrink);
+                findViewById(R.id.app_CL_InfoWrap).startAnimation(shrink);
+            }
+        }, 125);
+
+        final Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.app_CL_Info).setVisibility(View.INVISIBLE);
+            }
+        }, 249);
     }
 
 }//end of AppActivity{}
